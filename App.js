@@ -45,6 +45,8 @@ import {Stopwatch} from './src/utils/time';
 export * from './src/setup/api';
 export * from './src/setup/session-timers';
 
+import NativeDevSettings from 'react-native/Libraries/NativeModules/specs/NativeDevSettings';
+
 export const stopwatch = new Stopwatch();
 
 class App extends React.Component {
@@ -80,8 +82,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // Crashlytics().log('App Mounted');
-
+    if (__DEV__) {
+      // Crashlytics().log('App Mounted');
+      NativeDevSettings.setIsDebuggingRemotely(true);
+    }
     store.subscribe(() => {
       const {
         tunnel: {
