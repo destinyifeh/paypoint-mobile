@@ -141,6 +141,16 @@ class ReportsScene extends React.Component {
                 this.props.navigation.navigate('ReportTransactions')
               }
             />
+
+            <ItemRow
+              colors={['#2CBC65', '#2CBC65']}
+              icon="briefcase"
+              style={{
+                marginBottom: 30,
+              }}
+              title="CAC Report"
+              onPressOut={() => this.props.navigation.navigate('CacReports')}
+            />
             <ItemRow
               colors={['#9578F8', '#9E53F5']}
               icon="bar-chart"

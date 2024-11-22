@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BackHandler,
   ScrollView,
@@ -7,12 +7,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { Icon } from "react-native-elements";
-import { connect } from "react-redux";
-import ActivityIndicator from "../../../../../../../components/activity-indicator";
-import Header from "../../../../../../../components/header";
-import { BVN_LENGTH } from "../../../../../../../constants/fields";
+} from 'react-native';
+import {Icon} from 'react-native-elements';
+import {connect} from 'react-redux';
+import ActivityIndicator from '../../../../../../../components/activity-indicator';
+import Header from '../../../../../../../components/header';
+import {BVN_LENGTH} from '../../../../../../../constants/fields';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
@@ -25,20 +25,20 @@ import {
   FONT_SIZE_MID,
   FONT_SIZE_TEXT_INPUT,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import { onboardingService } from "../../../../../../../setup/api";
-import { saveData } from "../../../../../../../utils/storage";
-import FipProgressBar from "../../components/fip-progress-bar";
+} from '../../../../../../../constants/styles';
+import {onboardingService} from '../../../../../../../setup/api';
+import {saveData} from '../../../../../../../utils/storage';
+import FipProgressBar from '../../components/fip-progress-bar';
 
 function FipAgentNinVerification(props) {
-  const [form, setForm] = React.useState("");
+  const [form, setForm] = React.useState('');
   const [isError, setIsError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState('');
 
-  const kycId = props.navigation.getParam("kycId");
+  const {kycId} = props.route.params || {};
 
-  console.log(kycId, "kycid");
+  console.log(kycId, 'kycid');
 
   const handleBackButtonPress = () => {
     props.navigation.goBack();
@@ -47,8 +47,8 @@ function FipAgentNinVerification(props) {
 
   React.useEffect(() => {
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackButtonPress
+      'hardwareBackPress',
+      handleBackButtonPress,
     );
     return () => backHandler.remove();
   }, []);
@@ -58,15 +58,15 @@ function FipAgentNinVerification(props) {
   }, []);
 
   const checkIncomingRoute = () => {
-    if (props.navigationState.previousScreen === "Login") {
-      props.navigation.replace("HomeTabs");
+    if (props.navigationState.previousScreen === 'Login') {
+      props.navigation.replace('HomeTabs');
       return;
     }
   };
 
-  const updateFormField = (params) => {
+  const updateFormField = params => {
     setIsError(false);
-    setErrorMessage("");
+    setErrorMessage('');
 
     const newForm = {
       ...form,
@@ -79,7 +79,7 @@ function FipAgentNinVerification(props) {
   const checkNinValidity = async () => {
     setIsLoading(true);
     setIsError(false);
-    setErrorMessage("");
+    setErrorMessage('');
     let res;
 
     try {
@@ -87,44 +87,44 @@ function FipAgentNinVerification(props) {
         identificationNumber: form.nin,
         kycId: kycId,
       };
-      console.log(payload, "payloaderr");
+      console.log(payload, 'payloaderr');
       if (!form?.nin) {
         setIsError(true);
-        setErrorMessage("Please enter your NIN");
+        setErrorMessage('Please enter your NIN');
 
         setIsLoading(false);
       } else if (form?.nin.length !== BVN_LENGTH) {
         setIsError(true);
-        setErrorMessage("Field must be 11 characters");
+        setErrorMessage('Field must be 11 characters');
 
         setIsLoading(false);
       } else {
-        res = await onboardingService.fipKycValidation("NIN", payload);
-        console.log(res, "resto");
-        const { code, response } = res || {};
-        const { kycData, description } = response || {};
+        res = await onboardingService.fipKycValidation('NIN', payload);
+        console.log(res, 'resto');
+        const {code, response} = res || {};
+        const {kycData, description} = response || {};
         const {
           ninVerificationResponse,
           bvnVerificationResponse,
           kycId,
           kycNextStage,
         } = kycData || {};
-        const { validationStatus, ninData, message } =
+        const {validationStatus, ninData, message} =
           ninVerificationResponse || {};
-        const startingString = "We were unable to match";
+        const startingString = 'We were unable to match';
 
-        if (res?.response?.code === "40096") {
-          props.navigation.replace("FipAgentFailedVerification", {
+        if (res?.response?.code === '40096') {
+          props.navigation.replace('FipAgentFailedVerification', {
             message: res?.response?.description
               ? res.response.description
-              : "Oops! Something went wrong. Please try again later.",
+              : 'Oops! Something went wrong. Please try again later.',
           });
           setIsLoading(false);
 
           return;
         }
 
-        if (validationStatus === "NOT_VERIFIED") {
+        if (validationStatus === 'NOT_VERIFIED') {
           setIsError(true);
 
           setErrorMessage(
@@ -132,17 +132,17 @@ function FipAgentNinVerification(props) {
               ? message
               : res?.response?.description
               ? res.response.description
-              : "Oops! Something went wrong. Please try again later."
+              : 'Oops! Something went wrong. Please try again later.',
           );
           setIsLoading(false);
         } else if (
-          validationStatus === "VERIFIED" ||
-          kycNextStage === "BVN_VERIFY_MOBILE"
+          validationStatus === 'VERIFIED' ||
+          kycNextStage === 'BVN_VERIFY_MOBILE'
         ) {
           setIsLoading(false);
           setIsError(false);
-          await saveData("fipAgentBvnData", ninData);
-          props.navigation.replace("FipAgentPersonalInformation", {
+          await saveData('fipAgentBvnData', ninData);
+          props.navigation.replace('FipAgentPersonalInformation', {
             kycId: kycId,
             bvnData: ninData,
           });
@@ -154,18 +154,18 @@ function FipAgentNinVerification(props) {
           setErrorMessage(
             res?.response?.description
               ? res.response.description
-              : "Oops! Something went wrong. Please try again later."
+              : 'Oops! Something went wrong. Please try again later.',
           );
         }
       }
     } catch (err) {
-      console.log(err, "NIN Val error");
+      console.log(err, 'NIN Val error');
       setIsLoading(false);
       setIsError(true);
       setErrorMessage(
         res?.response?.description
           ? res.response.description
-          : "Oops! Something went wrong. Please try again later."
+          : 'Oops! Something went wrong. Please try again later.',
       );
     }
   };
@@ -190,17 +190,17 @@ function FipAgentNinVerification(props) {
           />
         }
         statusBarProps={{
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           barStyle: CONTENT_LIGHT,
         }}
         title="Setup New Agent"
         titleStyle={{
           color: COLOUR_WHITE,
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: FONT_SIZE_TITLE,
         }}
       />
-      <View style={{ width: "94%", alignSelf: "center" }}>
+      <View style={{width: '94%', alignSelf: 'center'}}>
         <FipProgressBar step="4" />
       </View>
       <ScrollView>
@@ -211,12 +211,11 @@ function FipAgentNinVerification(props) {
               fontFamily: FONT_FAMILY_BODY_SEMIBOLD,
               fontSize: 20,
               lineHeight: 24,
-              fontWeight: "600",
-            }}
-          >
+              fontWeight: '600',
+            }}>
             KYC Information
           </Text>
-          <View style={{ marginTop: 18 }}>
+          <View style={{marginTop: 18}}>
             <Text
               style={{
                 color: COLOUR_BLACK,
@@ -224,8 +223,7 @@ function FipAgentNinVerification(props) {
                 fontSize: FONT_SIZE_TITLE,
                 lineHeight: 20,
                 marginBottom: 8,
-              }}
-            >
+              }}>
               NIN
             </Text>
             <TextInput
@@ -233,8 +231,8 @@ function FipAgentNinVerification(props) {
               maxLength={11}
               editable={!isLoading}
               placeholder=""
-              onChangeText={(nin) => {
-                updateFormField({ nin });
+              onChangeText={nin => {
+                updateFormField({nin});
               }}
               defaultValue={form?.nin}
               style={[
@@ -264,9 +262,8 @@ function FipAgentNinVerification(props) {
 
           <TouchableOpacity
             disabled={isLoading}
-            style={[styles.button, { opacity: isLoading ? 0.6 : 1 }]}
-            onPress={checkNinValidity}
-          >
+            style={[styles.button, {opacity: isLoading ? 0.6 : 1}]}
+            onPress={checkNinValidity}>
             {isLoading ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
@@ -291,65 +288,65 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontFamily: FONT_FAMILY_BODY,
     fontSize: FONT_SIZE_TEXT_INPUT,
-    width: "100%",
+    width: '100%',
     backgroundColor: COLOUR_FORM_CONTROL_BACKGROUND,
 
     borderWidth: 1.5,
     borderRadius: 8,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 50,
     padding: 0,
     paddingLeft: 15,
   },
 
   contentContainer: {
-    width: "90%",
-    alignSelf: "center",
+    width: '90%',
+    alignSelf: 'center',
     flex: 1,
     paddingVertical: 15,
   },
   mainContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
   button: {
     height: 56,
-    backgroundColor: "#00425F",
+    backgroundColor: '#00425F',
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 40,
-    width: "100%",
+    width: '100%',
   },
 
   bannerText: {
-    color: "#5F738C",
+    color: '#5F738C',
     fontFamily: FONT_FAMILY_BODY,
     fontSize: FONT_SIZE_MID,
     lineHeight: 20,
   },
 
   buttonText: {
-    color: "white",
+    color: 'white',
     lineHeight: 24,
     fontSize: 16,
   },
 
   errorText: {
-    color: "#DC4437",
+    color: '#DC4437',
     fontFamily: FONT_FAMILY_BODY,
     fontSize: FONT_SIZE_MID,
     lineHeight: 20,
     left: 3,
   },
   errorView: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    width: "98%",
-    alignSelf: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '98%',
+    alignSelf: 'center',
   },
   inputError: {
-    color: "#DC4437",
+    color: '#DC4437',
   },
 });

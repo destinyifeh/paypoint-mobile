@@ -1,23 +1,23 @@
-import React from "react";
+import React from 'react';
 import {
   BackHandler,
   Modal,
   StyleSheet,
   TouchableOpacity,
   View,
-} from "react-native";
-import Button from "../components/button";
-import Text from "../components/text";
+} from 'react-native';
+import Button from '../components/button';
+import Text from '../components/text';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
   COLOUR_LINK_BLUE,
   COLOUR_OFF_WHITE,
   FONT_FAMILY_BODY_BOLD,
-} from "../constants/styles";
-import navigationService from "../utils/navigation-service";
+} from '../constants/styles';
+import navigationService from '../utils/navigation-service';
 
-export const CbnRequirementUpdate = (props) => {
+export const CbnRequirementUpdate = props => {
   const [force, setForce] = React.useState(false);
 
   React.useEffect(() => {
@@ -31,8 +31,8 @@ export const CbnRequirementUpdate = (props) => {
       };
 
       const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleBackButtonPress
+        'hardwareBackPress',
+        handleBackButtonPress,
       );
       return () => backHandler.remove();
     }
@@ -57,15 +57,15 @@ export const CbnRequirementUpdate = (props) => {
   const onPressNext = () => {
     if (props.kycCheckList.livelinessCheck === false) {
       props.updateCbnPromptModal();
-      props.navigation.navigate("AgentBvnVerification");
+      props.navigation.navigate('AgentBvnVerification');
     } else if (props.kycCheckList.bvnNinMatch === false) {
       props.updateCbnPromptModal();
-      props.navigation.navigate("AgentNinVerification", {
+      props.navigation.navigate('AgentNinVerification', {
         isFromDashboard: true,
       });
     } else if (props.kycCheckList.tinNinMatch === false) {
       props.updateCbnPromptModal();
-      props.navigation.navigate("AgentTinVerification");
+      props.navigation.navigate('AgentTinVerification');
     } else {
       props.updateCbnPromptModal();
     }
@@ -73,7 +73,7 @@ export const CbnRequirementUpdate = (props) => {
 
   const onLogout = () => {
     props.onSkip();
-    navigationService.replace("Logout");
+    navigationService.replace('Logout');
   };
 
   return (
@@ -88,31 +88,29 @@ export const CbnRequirementUpdate = (props) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View style={{ flexDirection: "column" }}>
+            <View style={{flexDirection: 'column'}}>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 <Text style={styles.header} bold black>
-                  Complete your KYC{" "}
+                  Complete your KYC{' '}
                 </Text>
               </View>
             </View>
 
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: 'row',
                 paddingHorizontal: 10,
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
                 paddingTop: 20,
-              }}
-            >
+              }}>
               <Text style={styles.textStyle}>
-                {" "}
+                {' '}
                 Please provide your complete KYC documentation so you can
                 continue transacting.
               </Text>
@@ -120,33 +118,31 @@ export const CbnRequirementUpdate = (props) => {
 
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 paddingTop: 15,
                 paddingHorizontal: 10,
-              }}
-            >
+              }}>
               <Button
                 onPress={onPressNext}
                 title="Provide your KYC"
-                buttonStyle={{ backgroundColor: COLOUR_BLUE }}
+                buttonStyle={{backgroundColor: COLOUR_BLUE}}
                 containerStyle={{
                   backgroundColor: COLOUR_BLUE,
-                  width: "100%",
+                  width: '100%',
                 }}
               />
             </View>
-            {force && (
+            {!force && (
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   paddingTop: 15,
                   paddingHorizontal: 10,
-                }}
-              >
+                }}>
                 <Button
                   onPress={props.onSkip}
                   title="Skip"
@@ -156,7 +152,7 @@ export const CbnRequirementUpdate = (props) => {
                   }}
                   containerStyle={{
                     backgroundColor: COLOUR_OFF_WHITE,
-                    width: "100%",
+                    width: '100%',
                     borderRadius: 2,
                   }}
                   titleStyle={{
@@ -166,14 +162,13 @@ export const CbnRequirementUpdate = (props) => {
               </View>
             )}
 
-            {!force && (
+            {force && (
               <View
                 style={{
                   paddingVertical: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
                 <Text>Don't have your KYC?</Text>
                 <TouchableOpacity onPress={onLogout}>
                   <Text
@@ -182,8 +177,7 @@ export const CbnRequirementUpdate = (props) => {
                       fontSize: 16,
                       marginLeft: 3,
                       fontFamily: FONT_FAMILY_BODY_BOLD,
-                    }}
-                  >
+                    }}>
                     Logout
                   </Text>
                 </TouchableOpacity>
@@ -199,19 +193,19 @@ export const CbnRequirementUpdate = (props) => {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.7)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: 20,
   },
   modalView: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
     borderRadius: 8,
     padding: 25,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -227,19 +221,19 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: '#2196F3',
   },
   textStyle: {
-    color: "black",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   header: {
     fontSize: 20,
-    textAlign: "center",
-    fontWeight: "bold",
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

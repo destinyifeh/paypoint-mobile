@@ -1,11 +1,11 @@
-import React from "react";
-import { Icon } from "react-native-elements";
+import React from 'react';
+import {Icon} from 'react-native-elements';
 
-import { BackHandler, StyleSheet, Text, TextInput, View } from "react-native";
-import { connect } from "react-redux";
-import Button from "../../../../../../../components/button";
-import Header from "../../../../../../../components/header";
-import { BVN_LENGTH } from "../../../../../../../constants/fields";
+import {BackHandler, StyleSheet, Text, TextInput, View} from 'react-native';
+import {connect} from 'react-redux';
+import Button from '../../../../../../../components/button';
+import Header from '../../../../../../../components/header';
+import {BVN_LENGTH} from '../../../../../../../constants/fields';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
@@ -18,15 +18,16 @@ import {
   FONT_SIZE_MID,
   FONT_SIZE_TEXT_INPUT,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import { onboardingService } from "../../../../../../../setup/api";
-import FipProgressBar from "../../components/fip-progress-bar";
+} from '../../../../../../../constants/styles';
+import {onboardingService} from '../../../../../../../setup/api';
+import FipProgressBar from '../../components/fip-progress-bar';
 
 function FipAgentBvnVerification(props) {
-  const kycId = props.navigation.getParam("kycId");
-  console.log(kycId, "kkycid");
+  const {kycId} = props.route.params || {};
 
-  console.log(props, "my props");
+  console.log(kycId, 'kkycid');
+
+  console.log(props, 'my props');
 
   const [state, setState] = React.useState({
     errorMessage: null,
@@ -36,9 +37,9 @@ function FipAgentBvnVerification(props) {
     isLoading: false,
     user: null,
     isLoadingBvn: false,
-    bvnErrorMessage: "",
+    bvnErrorMessage: '',
     isError: false,
-    bvn: "",
+    bvn: '',
     kycId: null,
   });
 
@@ -48,21 +49,21 @@ function FipAgentBvnVerification(props) {
   };
 
   React.useEffect(() => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       kycId: kycId,
     }));
     checkIncomingRoute();
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackButtonPress
+      'hardwareBackPress',
+      handleBackButtonPress,
     );
     return () => backHandler.remove();
   }, []);
 
   const checkIncomingRoute = () => {
-    if (props.navigationState.previousScreen === "Login") {
-      props.navigation.replace("HomeTabs");
+    if (props.navigationState.previousScreen === 'Login') {
+      props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -70,27 +71,27 @@ function FipAgentBvnVerification(props) {
   const onBvnValidation = async () => {
     let res;
     try {
-      setState((prevState) => ({
+      setState(prevState => ({
         ...prevState,
         isLoadingBvn: true,
-        bvnErrorMessage: "",
+        bvnErrorMessage: '',
         isError: false,
       }));
 
-      console.log(state.bvn, "my bvn");
+      console.log(state.bvn, 'my bvn');
 
       if (!state.bvn) {
-        setState((prevState) => ({
+        setState(prevState => ({
           ...prevState,
           isLoadingBvn: false,
-          bvnErrorMessage: "Please enter your BVN",
+          bvnErrorMessage: 'Please enter your BVN',
           isError: true,
         }));
       } else if (state.bvn.length !== BVN_LENGTH) {
-        setState((prevState) => ({
+        setState(prevState => ({
           ...prevState,
           isLoadingBvn: false,
-          bvnErrorMessage: "Invalid BVN",
+          bvnErrorMessage: 'Invalid BVN',
           isError: true,
         }));
       } else {
@@ -98,13 +99,13 @@ function FipAgentBvnVerification(props) {
           identificationNumber: state.bvn,
           kycId: state.kycId,
         };
-        console.log(payload, "payloadd");
-        res = await onboardingService.fipKycValidation("BVN", payload);
-        console.log(res, "resto");
+        console.log(payload, 'payloadd');
+        res = await onboardingService.fipKycValidation('BVN', payload);
+        console.log(res, 'resto');
 
-        const { code, response } = res || {};
-        const { kycData, description } = response || {};
-        const { bvnVerificationResponse, kycId, kycNextStage } = kycData || {};
+        const {code, response} = res || {};
+        const {kycData, description} = response || {};
+        const {bvnVerificationResponse, kycId, kycNextStage} = kycData || {};
         const {
           validationStatus,
           bvnData,
@@ -113,19 +114,19 @@ function FipAgentBvnVerification(props) {
           tokenId,
           tokenPrefix,
         } = bvnVerificationResponse || {};
-        if (validationStatus === "NOT_VERIFIED") {
-          setState((prevState) => ({
+        if (validationStatus === 'NOT_VERIFIED') {
+          setState(prevState => ({
             ...prevState,
             isError: true,
             isLoadingBvn: false,
             bvnErrorMessage: message
               ? message
-              : "Something went wrong, please try again",
+              : 'Something went wrong, please try again',
           }));
           return false;
         } else if (
-          validationStatus === "VERIFIED" ||
-          kycNextStage === "BVN_VERIFY_MOBILE"
+          validationStatus === 'VERIFIED' ||
+          kycNextStage === 'BVN_VERIFY_MOBILE'
         ) {
           const bvnInfo = {
             bvn: state.bvn,
@@ -134,18 +135,18 @@ function FipAgentBvnVerification(props) {
             kycId: kycId,
             bvnPhoneNumber: bvnPhoneNumber,
           };
-          props.navigation.replace("FipAgentOtpVerification", {
+          props.navigation.replace('FipAgentOtpVerification', {
             bvnInfo: bvnInfo,
           });
 
           return;
         } else {
-          setState((prevState) => ({
+          setState(prevState => ({
             ...prevState,
             isLoadingBvn: false,
             bvnErrorMessage: description
               ? description
-              : "Something went wrong, please try again",
+              : 'Something went wrong, please try again',
             isError: true,
           }));
         }
@@ -153,12 +154,12 @@ function FipAgentBvnVerification(props) {
     } catch (err) {
       console.log(err);
 
-      setState((prevState) => ({
+      setState(prevState => ({
         ...prevState,
         isLoadingBvn: false,
         bvnErrorMessage: res?.response?.description
           ? res.response?.description
-          : "Something went wrong, please try again",
+          : 'Something went wrong, please try again',
         isError: true,
       }));
     }
@@ -181,17 +182,17 @@ function FipAgentBvnVerification(props) {
           />
         }
         statusBarProps={{
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           barStyle: CONTENT_LIGHT,
         }}
         title="Setup New Agent"
         titleStyle={{
           color: COLOUR_WHITE,
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: FONT_SIZE_TITLE,
         }}
       />
-      <View style={{ width: "94%", alignSelf: "center" }}>
+      <View style={{width: '94%', alignSelf: 'center'}}>
         <FipProgressBar step="2" />
       </View>
 
@@ -202,9 +203,8 @@ function FipAgentBvnVerification(props) {
             fontFamily: FONT_FAMILY_BODY_SEMIBOLD,
             fontSize: 20,
             lineHeight: 24,
-            fontWeight: "600",
-          }}
-        >
+            fontWeight: '600',
+          }}>
           Enter your BVN
         </Text>
         <Text
@@ -214,11 +214,10 @@ function FipAgentBvnVerification(props) {
             fontSize: FONT_SIZE_MID,
             lineHeight: 20,
             marginTop: 8,
-          }}
-        >
+          }}>
           Dial * 565 *0# to securely get your BVN from your network provider.
         </Text>
-        <View style={{ width: "100%", marginTop: 18 }}>
+        <View style={{width: '100%', marginTop: 18}}>
           <Text
             style={{
               color: COLOUR_BLACK,
@@ -226,8 +225,7 @@ function FipAgentBvnVerification(props) {
               fontSize: FONT_SIZE_TITLE,
               lineHeight: 20,
               marginBottom: 8,
-            }}
-          >
+            }}>
             BVN
           </Text>
           <TextInput
@@ -235,10 +233,10 @@ function FipAgentBvnVerification(props) {
             maxLength={11}
             editable={!state.isLoadingBvn}
             placeholder="Enter BVN"
-            onChangeText={(bvn) => {
-              setState((prevState) => ({
+            onChangeText={bvn => {
+              setState(prevState => ({
                 ...prevState,
-                bvnErrorMessage: "",
+                bvnErrorMessage: '',
                 isError: false,
                 bvn: bvn,
               }));
@@ -275,7 +273,7 @@ function FipAgentBvnVerification(props) {
                 marginTop: 40,
               }}
               title="Next"
-              buttonStyle={{ backgroundColor: COLOUR_BLUE }}
+              buttonStyle={{backgroundColor: COLOUR_BLUE}}
               loading={state.isLoadingBvn}
               disabled={state.isLoadingBvn}
             />
@@ -288,46 +286,46 @@ function FipAgentBvnVerification(props) {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    width: "90%",
-    alignSelf: "center",
+    width: '90%',
+    alignSelf: 'center',
     flex: 1,
     paddingVertical: 15,
   },
   mainContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
 
   inputStyle: {
     fontFamily: FONT_FAMILY_BODY,
     fontSize: FONT_SIZE_TEXT_INPUT,
-    width: "100%",
+    width: '100%',
     backgroundColor: COLOUR_FORM_CONTROL_BACKGROUND,
 
     borderWidth: 1.5,
     borderRadius: 8,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 50,
     padding: 0,
     paddingLeft: 15,
   },
 
   errorText: {
-    color: "#DC4437",
+    color: '#DC4437',
     fontFamily: FONT_FAMILY_BODY,
     fontSize: FONT_SIZE_MID,
     lineHeight: 20,
     left: 3,
   },
   errorView: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    width: "98%",
-    alignSelf: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '98%',
+    alignSelf: 'center',
   },
   inputError: {
-    color: "#DC4437",
+    color: '#DC4437',
   },
 });
 

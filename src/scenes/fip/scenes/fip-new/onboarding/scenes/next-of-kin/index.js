@@ -1,12 +1,12 @@
-import React from "react";
-import { BackHandler, ScrollView, Text, View } from "react-native";
-import { Icon } from "react-native-elements";
+import React from 'react';
+import {BackHandler, ScrollView, Text, View} from 'react-native';
+import {Icon} from 'react-native-elements';
 
-import { connect } from "react-redux";
-import Button from "../../../../../../../components/button";
-import Header from "../../../../../../../components/header";
-import { APPLICATION } from "../../../../../../../constants";
-import { ERROR_STATUS } from "../../../../../../../constants/api";
+import {connect} from 'react-redux';
+import Button from '../../../../../../../components/button';
+import Header from '../../../../../../../components/header';
+import {APPLICATION} from '../../../../../../../constants';
+import {ERROR_STATUS} from '../../../../../../../constants/api';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
@@ -14,21 +14,21 @@ import {
   CONTENT_LIGHT,
   FONT_FAMILY_BODY_SEMIBOLD,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import Onboarding from "../../../../../../../services/api/resources/onboarding";
+} from '../../../../../../../constants/styles';
+import Onboarding from '../../../../../../../services/api/resources/onboarding';
 import {
   resetApplication,
   updateApplication,
-} from "../../../../../../../services/redux/actions/fmpa-tunnel";
+} from '../../../../../../../services/redux/actions/fmpa-tunnel';
 import {
   hideNavigator,
   showNavigator,
-} from "../../../../../../../services/redux/actions/navigation";
-import { flashMessage } from "../../../../../../../utils/dialog";
-import sanitizePhoneNumber from "../../../../../../../utils/sanitizers/phone-number";
-import { saveData } from "../../../../../../../utils/storage";
-import FipProgressBar from "../../components/fip-progress-bar";
-import { FipAgentNextOfKinInformationForm } from "./next-of-kin-form";
+} from '../../../../../../../services/redux/actions/navigation';
+import {flashMessage} from '../../../../../../../utils/dialog';
+import sanitizePhoneNumber from '../../../../../../../utils/sanitizers/phone-number';
+import {saveData} from '../../../../../../../utils/storage';
+import FipProgressBar from '../../components/fip-progress-bar';
+import {FipAgentNextOfKinInformationForm} from './next-of-kin-form';
 
 class FipAgentNextOfKinInformationScene extends React.Component {
   onboarding = new Onboarding();
@@ -51,14 +51,13 @@ class FipAgentNextOfKinInformationScene extends React.Component {
   componentDidMount() {
     this.checkIncomingRoute();
     this.backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      this.handleBackButtonPress
+      'hardwareBackPress',
+      this.handleBackButtonPress,
     );
 
-    isFromApplicationPreview = this.props.navigation.getParam(
-      "isFromApplicationPreview"
-    );
-    this.setState({ isFromApplicationPreview: isFromApplicationPreview });
+    const {isFromApplicationPreview} = this.props.route.params || {};
+
+    this.setState({isFromApplicationPreview: isFromApplicationPreview});
   }
 
   componentWillUnmount() {
@@ -74,8 +73,8 @@ class FipAgentNextOfKinInformationScene extends React.Component {
   }
 
   checkIncomingRoute = () => {
-    if (this.props.navigationState.previousScreen === "Login") {
-      this.props.navigation.replace("HomeTabs");
+    if (this.props.navigationState.previousScreen === 'Login') {
+      this.props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -118,22 +117,22 @@ class FipAgentNextOfKinInformationScene extends React.Component {
 
       const applicationId = this.props.application?.applicationId;
 
-      console.log(updatedApplicationForm, "my pay");
+      console.log(updatedApplicationForm, 'my pay');
 
       const saveAsDraftResponse = await this.onboarding.saveFipNextOfKinDetails(
         applicationId,
-        updatedApplicationForm
+        updatedApplicationForm,
       ); //saveAsDraft
       const saveAsDraftResponseStatus = saveAsDraftResponse.status;
       const saveAsDraftResponseObj = saveAsDraftResponse.response;
-      console.log(saveAsDraftResponse, "next details");
+      console.log(saveAsDraftResponse, 'next details');
 
       if (saveAsDraftResponseStatus === ERROR_STATUS) {
         flashMessage(
           null,
           saveAsDraftResponse?.response?.description
             ? saveAsDraftResponse.response.description
-            : "Oops! Something went wrong. Please try again"
+            : 'Oops! Something went wrong. Please try again',
         );
         this.setState({
           isLoading: false,
@@ -149,11 +148,11 @@ class FipAgentNextOfKinInformationScene extends React.Component {
         errorMessage: null,
         isLoading: false,
       });
-      this.props.navigation.replace("FipAgentApplicationPreview");
+      this.props.navigation.replace('FipAgentApplicationPreview');
 
       return saveAsDraftResponseObj;
     } catch (err) {
-      console.log(err, "nextOfKin details err");
+      console.log(err, 'nextOfKin details err');
       this.setState({
         errorMessage: null,
         isLoading: false,
@@ -163,23 +162,22 @@ class FipAgentNextOfKinInformationScene extends React.Component {
 
   onGoBack = () => {
     if (this.state.isFromApplicationPreview) {
-      this.props.navigation.replace("FipAgentApplicationPreview");
+      this.props.navigation.replace('FipAgentApplicationPreview');
       return;
     }
     this.props.navigation.goBack();
   };
 
   render() {
-    const { application } = this.props;
-    console.log(application, "apllicat next");
+    const {application} = this.props;
+    console.log(application, 'apllicat next');
 
     return (
       <View
         style={{
           backgroundColor: COLOUR_WHITE,
           flex: 1,
-        }}
-      >
+        }}>
         <Header
           containerStyle={{
             backgroundColor: COLOUR_BLUE,
@@ -198,20 +196,20 @@ class FipAgentNextOfKinInformationScene extends React.Component {
           // rightComponent={skipButton}
           // rightComponent={this.toShowSkipButton ? skipButton : null}
           statusBarProps={{
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             barStyle: CONTENT_LIGHT,
           }}
           title="Setup New Agent"
           titleStyle={{
             color: COLOUR_WHITE,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: FONT_SIZE_TITLE,
           }}
           hideNavigationMenu={this.props.hideNavigator}
           showNavigationMenu={this.props.showNavigator}
           withNavigator={this.props.withNavigator}
         />
-        <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <View style={{width: '95%', alignSelf: 'center', marginBottom: 15}}>
           <FipProgressBar step="8" />
         </View>
 
@@ -219,26 +217,24 @@ class FipAgentNextOfKinInformationScene extends React.Component {
           <View
             style={{
               flex: 1,
-              width: "90%",
-              alignSelf: "center",
-            }}
-          >
+              width: '90%',
+              alignSelf: 'center',
+            }}>
             <Text
               style={{
                 color: COLOUR_BLACK,
                 fontFamily: FONT_FAMILY_BODY_SEMIBOLD,
                 fontSize: 20,
                 lineHeight: 24,
-                fontWeight: "600",
+                fontWeight: '600',
                 marginBottom: 18,
-              }}
-            >
+              }}>
               Next of Kin
             </Text>
             <FipAgentNextOfKinInformationForm
               isDisabled={this.state.isLoading}
               propagateFormErrors={this.state.propagateFormErrors}
-              ref={(form) => (this.form = form)}
+              ref={form => (this.form = form)}
               application={application}
             />
             <Button
@@ -247,9 +243,9 @@ class FipAgentNextOfKinInformationScene extends React.Component {
               title="CONTINUE"
               containerStyle={{
                 marginVertical: 15,
-                backgroundColor: "#00425F",
+                backgroundColor: '#00425F',
               }}
-              buttonStyle={{ backgroundColor: "#00425F" }}
+              buttonStyle={{backgroundColor: '#00425F'}}
             />
           </View>
         </ScrollView>
@@ -274,12 +270,11 @@ function mapDispatchToProps(dispatch) {
     hideNavigator: () => dispatch(hideNavigator()),
     showNavigator: () => dispatch(showNavigator()),
     resetApplication: () => dispatch(resetApplication()),
-    updateApplication: (application) =>
-      dispatch(updateApplication(application)),
+    updateApplication: application => dispatch(updateApplication(application)),
   };
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FipAgentNextOfKinInformationScene);

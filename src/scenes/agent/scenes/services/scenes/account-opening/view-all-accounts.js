@@ -12,7 +12,7 @@ import {
 } from '../../../../../../constants/styles';
 
 export default function ViewAllAccounts(props) {
-  category = this.props.route?.params?.category || null;
+  const category = props.route?.params?.category || null;
 
   return (
     <View style={{flex: 1}}>

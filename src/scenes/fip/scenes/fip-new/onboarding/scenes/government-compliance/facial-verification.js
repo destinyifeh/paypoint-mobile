@@ -1,36 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, PermissionsAndroid, StyleSheet, View } from "react-native";
-import { Icon } from "react-native-elements";
+import React, {useEffect, useRef, useState} from 'react';
+import {Alert, PermissionsAndroid, StyleSheet, View} from 'react-native';
+import {Icon} from 'react-native-elements';
 
-import { BackHandler } from "react-native";
-import { connect } from "react-redux";
-import Header from "../../../../../../../components/header";
+import {BackHandler} from 'react-native';
+import {connect} from 'react-redux';
+import Header from '../../../../../../../components/header';
 import {
   ERROR_STATUS,
   SUCCESS_STATUS,
   SUCCESSFUL_STATUS,
-} from "../../../../../../../constants/api";
+} from '../../../../../../../constants/api';
 import {
   COLOUR_BLUE,
   COLOUR_WHITE,
   CONTENT_LIGHT,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import FaceIdVerificationModal from "../../../../../../../fragments/face-id-verifiction-modal";
-import { onboardingService } from "../../../../../../../setup/api";
-import FipProgressBar from "../../components/fip-progress-bar";
+} from '../../../../../../../constants/styles';
+import FaceIdVerificationModal from '../../../../../../../fragments/face-id-verifiction-modal';
+import {onboardingService} from '../../../../../../../setup/api';
+import FipProgressBar from '../../components/fip-progress-bar';
 
 function FipAgentFacialVerification(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [jobIdNum, setJobIdNum] = useState("");
-  const [agentBvn, setAgentBvn] = useState("");
-  const [agentKycid, setAgentKycId] = useState("");
+  const [jobIdNum, setJobIdNum] = useState('');
+  const [agentBvn, setAgentBvn] = useState('');
+  const [agentKycid, setAgentKycId] = useState('');
 
   const faceIdModalRef = useRef(null);
-  const { bvn, kycId } = props.navigation.getParam("data", {});
-  console.log(bvn, "agent bvn");
-  console.log(kycId, "agent kycId");
+  const {kycId, bvn} = props.route.params?.data || {};
+
+  console.log(bvn, 'agent bvn');
+  console.log(kycId, 'agent kycId');
 
   React.useEffect(() => {
     setAgentBvn(bvn);
@@ -47,8 +48,8 @@ function FipAgentFacialVerification(props) {
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackButtonPress
+      'hardwareBackPress',
+      handleBackButtonPress,
     );
     return () => backHandler.remove();
   }, []);
@@ -65,12 +66,12 @@ function FipAgentFacialVerification(props) {
       setIsModalVisible(true);
     };
 
-    const focusListener = props.navigation.addListener("didFocus", handleFocus);
+    const focusListener = props.navigation.addListener('didFocus', handleFocus);
   }, [props.navigation]);
 
   const checkIncomingRoute = () => {
-    if (props.navigationState.previousScreen === "Login") {
-      props.navigation.replace("HomeTabs");
+    if (props.navigationState.previousScreen === 'Login') {
+      props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -81,13 +82,13 @@ function FipAgentFacialVerification(props) {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
-          title: "Quickteller App Camera Permission",
+          title: 'Quickteller App Camera Permission',
           message:
-            "Quickteller App needs access to your camera so you can complete your verification.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
+            'Quickteller App needs access to your camera so you can complete your verification.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         initiateLivelinessCheck();
@@ -105,19 +106,19 @@ function FipAgentFacialVerification(props) {
       message,
       [
         {
-          text: "Cancel",
+          text: 'Cancel',
           onPress: () => {},
-          style: "cancel",
+          style: 'cancel',
         },
         {
-          text: "Home",
+          text: 'Home',
           onPress: () => {
-            props.navigation.replace("HomeTabs"), setIsModalVisible(false);
+            props.navigation.replace('HomeTabs'), setIsModalVisible(false);
           },
         },
       ],
 
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -127,13 +128,13 @@ function FipAgentFacialVerification(props) {
       kycId: agentKycid,
     };
 
-    console.log(payload, "payloader");
+    console.log(payload, 'payloader');
     try {
       const res = await onboardingService.initiateLivelinessCheck(agentKycid);
-      const { status, response, code } = res;
-      const { kycData, description } = response;
-      console.log("RESPONSEINITIATE", res);
-      console.log("RESPONSEINITIATE2", response);
+      const {status, response, code} = res;
+      const {kycData, description} = response;
+      console.log('RESPONSEINITIATE', res);
+      console.log('RESPONSEINITIATE2', response);
 
       if (status === ERROR_STATUS) {
         setIsLoading(false);
@@ -141,13 +142,13 @@ function FipAgentFacialVerification(props) {
           null,
           description
             ? description
-            : "Oops! Something went wrong while initiating your request. Please try again"
+            : 'Oops! Something went wrong while initiating your request. Please try again',
         );
       } else if (
         status === SUCCESS_STATUS &&
         description === SUCCESSFUL_STATUS
       ) {
-        const { jobId, kycId } = kycData;
+        const {jobId, kycId} = kycData;
         setJobIdNum(jobId);
         setAgentKycId(kycId);
         setIsLoading(false);
@@ -158,16 +159,16 @@ function FipAgentFacialVerification(props) {
           null,
           description
             ? description
-            : "Oops! Something went wrong while initiating your request. Please try again"
+            : 'Oops! Something went wrong while initiating your request. Please try again',
         );
         return;
       }
     } catch (error) {
-      console.log(error, "liveliness err");
+      console.log(error, 'liveliness err');
       setIsLoading(false);
       showAlert(
         null,
-        "Oops! Something went wrong while initiating your request. Please try again"
+        'Oops! Something went wrong while initiating your request. Please try again',
       );
       return;
     }
@@ -184,7 +185,7 @@ function FipAgentFacialVerification(props) {
       bvn: agentBvn,
       kycId: agentKycid,
     };
-    props.navigation.navigate("FipAgentWebViewFacialVerification", {
+    props.navigation.navigate('FipAgentWebViewFacialVerification', {
       data: data,
     });
   };
@@ -206,17 +207,17 @@ function FipAgentFacialVerification(props) {
           />
         }
         statusBarProps={{
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           barStyle: CONTENT_LIGHT,
         }}
         title="Setup New Agent"
         titleStyle={{
           color: COLOUR_WHITE,
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: FONT_SIZE_TITLE,
         }}
       />
-      <View style={{ width: "95%", alignSelf: "center" }}>
+      <View style={{width: '95%', alignSelf: 'center'}}>
         <FipProgressBar step="3" />
       </View>
       <FaceIdVerificationModal
@@ -236,7 +237,7 @@ function FipAgentFacialVerification(props) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
 });
 

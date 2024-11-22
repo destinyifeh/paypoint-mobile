@@ -1,12 +1,12 @@
-import React from "react";
-import { BackHandler, ScrollView, Text, View } from "react-native";
-import { Icon } from "react-native-elements";
+import React from 'react';
+import {BackHandler, ScrollView, Text, View} from 'react-native';
+import {Icon} from 'react-native-elements';
 
-import { connect } from "react-redux";
-import Button from "../../../../../../../components/button";
-import Header from "../../../../../../../components/header";
-import { APPLICATION } from "../../../../../../../constants";
-import { ERROR_STATUS } from "../../../../../../../constants/api";
+import {connect} from 'react-redux';
+import Button from '../../../../../../../components/button';
+import Header from '../../../../../../../components/header';
+import {APPLICATION} from '../../../../../../../constants';
+import {ERROR_STATUS} from '../../../../../../../constants/api';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
@@ -14,20 +14,20 @@ import {
   CONTENT_LIGHT,
   FONT_FAMILY_BODY_SEMIBOLD,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import Onboarding from "../../../../../../../services/api/resources/onboarding";
+} from '../../../../../../../constants/styles';
+import Onboarding from '../../../../../../../services/api/resources/onboarding';
 import {
   resetApplication,
   updateApplication,
-} from "../../../../../../../services/redux/actions/fmpa-tunnel";
+} from '../../../../../../../services/redux/actions/fmpa-tunnel';
 import {
   hideNavigator,
   showNavigator,
-} from "../../../../../../../services/redux/actions/navigation";
-import { flashMessage } from "../../../../../../../utils/dialog";
-import { saveData } from "../../../../../../../utils/storage";
-import FipProgressBar from "../../components/fip-progress-bar";
-import { FipAgentResidentialInformationForm } from "./residential-address-form";
+} from '../../../../../../../services/redux/actions/navigation';
+import {flashMessage} from '../../../../../../../utils/dialog';
+import {saveData} from '../../../../../../../utils/storage';
+import FipProgressBar from '../../components/fip-progress-bar';
+import {FipAgentResidentialInformationForm} from './residential-address-form';
 
 class FipAgentResidentialAddressInformationScene extends React.Component {
   onboarding = new Onboarding();
@@ -52,13 +52,12 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
   componentDidMount() {
     this.checkIncomingRoute();
     this.backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      this.handleBackButtonPress
+      'hardwareBackPress',
+      this.handleBackButtonPress,
     );
-    isFromApplicationPreview = this.props.navigation.getParam(
-      "isFromApplicationPreview"
-    );
-    kycId = this.props.navigation.getParam("kycId");
+
+    const {isFromApplicationPreview, kycId} = this.props.route.params || {};
+
     this.setState({
       isFromApplicationPreview: isFromApplicationPreview,
       kycId: kycId,
@@ -78,8 +77,8 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
   }
 
   checkIncomingRoute = () => {
-    if (this.props.navigationState.previousScreen === "Login") {
-      this.props.navigation.replace("HomeTabs");
+    if (this.props.navigationState.previousScreen === 'Login') {
+      this.props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -123,20 +122,21 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
 
       const applicationId = this.props.application?.applicationId;
 
-      const saveAsDraftResponse = await this.onboarding.saveFipResidentialDetails(
-        applicationId,
-        updatedApplicationForm
-      ); //saveAsDraft
+      const saveAsDraftResponse =
+        await this.onboarding.saveFipResidentialDetails(
+          applicationId,
+          updatedApplicationForm,
+        ); //saveAsDraft
       const saveAsDraftResponseStatus = saveAsDraftResponse.status;
       const saveAsDraftResponseObj = saveAsDraftResponse.response;
-      console.log(saveAsDraftResponse, "residential details");
+      console.log(saveAsDraftResponse, 'residential details');
 
       if (saveAsDraftResponseStatus === ERROR_STATUS) {
         flashMessage(
           null,
           saveAsDraftResponse?.response?.description
             ? saveAsDraftResponse.response.description
-            : "Oops! Something went wrong. Please try again"
+            : 'Oops! Something went wrong. Please try again',
         );
         this.setState({
           isLoading: false,
@@ -151,11 +151,11 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
         errorMessage: null,
         isLoading: false,
       });
-      this.props.navigation.navigate("FipAgentNextOfKinInformation");
+      this.props.navigation.navigate('FipAgentNextOfKinInformation');
 
       return saveAsDraftResponseObj;
     } catch (err) {
-      console.log(err, "Residentail details error");
+      console.log(err, 'Residentail details error');
       this.setState({
         errorMessage: null,
         isLoading: false,
@@ -165,22 +165,21 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
 
   onGoBack = () => {
     if (this.state.isFromApplicationPreview) {
-      this.props.navigation.replace("FipAgentApplicationPreview");
+      this.props.navigation.replace('FipAgentApplicationPreview');
       return;
     }
     this.props.navigation.goBack();
   };
 
   render() {
-    const { application } = this.props;
+    const {application} = this.props;
 
     return (
       <View
         style={{
           backgroundColor: COLOUR_WHITE,
           flex: 1,
-        }}
-      >
+        }}>
         <Header
           containerStyle={{
             backgroundColor: COLOUR_BLUE,
@@ -199,20 +198,20 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
           // rightComponent={skipButton}
           // rightComponent={this.toShowSkipButton ? skipButton : null}
           statusBarProps={{
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             barStyle: CONTENT_LIGHT,
           }}
           title="Setup New Agent"
           titleStyle={{
             color: COLOUR_WHITE,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: FONT_SIZE_TITLE,
           }}
           hideNavigationMenu={this.props.hideNavigator}
           showNavigationMenu={this.props.showNavigator}
           withNavigator={this.props.withNavigator}
         />
-        <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <View style={{width: '95%', alignSelf: 'center', marginBottom: 15}}>
           <FipProgressBar step="7" />
         </View>
 
@@ -220,26 +219,24 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
           <View
             style={{
               flex: 1,
-              width: "90%",
-              alignSelf: "center",
-            }}
-          >
+              width: '90%',
+              alignSelf: 'center',
+            }}>
             <Text
               style={{
                 color: COLOUR_BLACK,
                 fontFamily: FONT_FAMILY_BODY_SEMIBOLD,
                 fontSize: 20,
                 lineHeight: 24,
-                fontWeight: "600",
+                fontWeight: '600',
                 marginBottom: 18,
-              }}
-            >
+              }}>
               Residential Address
             </Text>
             <FipAgentResidentialInformationForm
               isDisabled={this.state.isLoading}
               propagateFormErrors={this.state.propagateFormErrors}
-              ref={(form) => (this.form = form)}
+              ref={form => (this.form = form)}
               application={application}
             />
 
@@ -249,9 +246,9 @@ class FipAgentResidentialAddressInformationScene extends React.Component {
               title="CONTINUE"
               containerStyle={{
                 marginVertical: 15,
-                backgroundColor: "#00425F",
+                backgroundColor: '#00425F',
               }}
-              buttonStyle={{ backgroundColor: "#00425F" }}
+              buttonStyle={{backgroundColor: '#00425F'}}
             />
           </View>
         </ScrollView>
@@ -274,12 +271,11 @@ function mapDispatchToProps(dispatch) {
     hideNavigator: () => dispatch(hideNavigator()),
     showNavigator: () => dispatch(showNavigator()),
     resetApplication: () => dispatch(resetApplication()),
-    updateApplication: (application) =>
-      dispatch(updateApplication(application)),
+    updateApplication: application => dispatch(updateApplication(application)),
   };
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FipAgentResidentialAddressInformationScene);

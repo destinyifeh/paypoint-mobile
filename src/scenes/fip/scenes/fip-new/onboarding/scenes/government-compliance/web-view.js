@@ -1,30 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { BackHandler, SafeAreaView, StyleSheet, View } from "react-native";
-import { WebView } from "react-native-webview";
-import { connect } from "react-redux";
-import ActivityIndicator from "../../../../../../../components/activity-indicator";
-import { FIP_WEBVIEW_FACIAL_VERIFICATION_BASE_URL } from "../../../../../../../constants/api-resources";
-import { retrieveAuthToken } from "../../../../../../../utils/auth";
+import React, {useEffect, useState} from 'react';
+import {BackHandler, SafeAreaView, StyleSheet, View} from 'react-native';
+import {WebView} from 'react-native-webview';
+import {connect} from 'react-redux';
+import ActivityIndicator from '../../../../../../../components/activity-indicator';
+import {FIP_WEBVIEW_FACIAL_VERIFICATION_BASE_URL} from '../../../../../../../constants/api-resources';
+import {retrieveAuthToken} from '../../../../../../../utils/auth';
 
-const FipAgentFaceVerificatiobWebViewScreen = (props) => {
-  const [token, setToken] = useState("");
-  const [kycStatus, setKycStatus] = useState("");
+const FipAgentFaceVerificatiobWebViewScreen = props => {
+  const [token, setToken] = useState('');
+  const [kycStatus, setKycStatus] = useState('');
 
-  const { bvn, kycId, jobId } = props.navigation.getParam("data", {});
-  console.log(bvn, "bvnn");
-  console.log(kycId, "kycIUd");
-  console.log(jobId, "jobId");
+  const {bvn, kycId, jobId} = props.route.params?.data || {};
+
+  console.log(bvn, 'bvnn');
+  console.log(kycId, 'kycIUd');
+  console.log(jobId, 'jobId');
 
   const getToken = async () => {
-    const { authToken } = await retrieveAuthToken();
+    const {authToken} = await retrieveAuthToken();
     setToken(authToken);
   };
 
   useEffect(() => {
     getToken();
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackButtonPress
+      'hardwareBackPress',
+      handleBackButtonPress,
     );
     return () => backHandler.remove();
   }, [jobId]);
@@ -34,8 +35,8 @@ const FipAgentFaceVerificatiobWebViewScreen = (props) => {
   }, []);
 
   const checkIncomingRoute = () => {
-    if (props.navigationState.previousScreen === "Login") {
-      props.navigation.replace("HomeTabs");
+    if (props.navigationState.previousScreen === 'Login') {
+      props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -47,10 +48,10 @@ const FipAgentFaceVerificatiobWebViewScreen = (props) => {
   const uri = `${FIP_WEBVIEW_FACIAL_VERIFICATION_BASE_URL}?bvn=${bvn}&jobId=${jobId}&token=${token}&kycId=${kycId}`;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <WebView
-        originWhitelist={["*"]}
-        source={{ uri }}
+        originWhitelist={['*']}
+        source={{uri}}
         startInLoadingState={true}
         sharedCookiesEnabled={true}
         javaScriptEnabled={true}
@@ -67,57 +68,56 @@ const FipAgentFaceVerificatiobWebViewScreen = (props) => {
           console.log("Injected JavaScript running--Dez on it");
         })();
       `}
-        onError={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.error("WebView error: ", nativeEvent);
+        onError={syntheticEvent => {
+          const {nativeEvent} = syntheticEvent;
+          console.error('WebView error: ', nativeEvent);
         }}
-        onLoad={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.log("WebView loaded--Dez: ", nativeEvent);
+        onLoad={syntheticEvent => {
+          const {nativeEvent} = syntheticEvent;
+          console.log('WebView loaded--Dez: ', nativeEvent);
         }}
-        onLoadEnd={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.log("WebView load ended: ", nativeEvent);
+        onLoadEnd={syntheticEvent => {
+          const {nativeEvent} = syntheticEvent;
+          console.log('WebView load ended: ', nativeEvent);
         }}
-        onMessage={(event) => {
+        onMessage={event => {
           try {
-            console.log("WEBVIEW MESSAGE", event.nativeEvent.data);
+            console.log('WEBVIEW MESSAGE', event.nativeEvent.data);
             const messageData = JSON.parse(event.nativeEvent.data);
-            console.log("WEBVIEW MESSAGE2", messageData.key);
-            if (messageData.key === "value") {
+            console.log('WEBVIEW MESSAGE2', messageData.key);
+            if (messageData.key === 'value') {
               const data = {
                 jobId: jobId,
                 bvn: bvn,
                 kycId: kycId,
               };
               props.navigation.replace(
-                "FipAgentFacialVerificationConfirmation",
+                'FipAgentFacialVerificationConfirmation',
                 {
                   data: data,
-                }
+                },
               );
-            } else if (messageData.key === "Back") {
+            } else if (messageData.key === 'Back') {
               props.navigation.goBack();
             }
           } catch (error) {
-            console.error("Error processing message from WebView", error);
+            console.error('Error processing message from WebView', error);
           }
         }}
         renderLoading={() => (
           <View
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: "white",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
+              backgroundColor: 'white',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
               marginTop: 30,
-            }}
-          >
+            }}>
             <ActivityIndicator />
           </View>
         )}

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -6,18 +6,15 @@ import {
   ScrollView,
   Text,
   View,
-} from "react-native";
-import { connect } from "react-redux";
+} from 'react-native';
+import {connect} from 'react-redux';
 
-import { Icon } from "react-native-elements";
-import Button from "../../../../../../../components/button";
-import Header from "../../../../../../../components/header";
-import Hyperlink from "../../../../../../../components/hyperlink";
-import { AGENT_TYPE_ID, APPLICATION } from "../../../../../../../constants";
-import {
-  ERROR_STATUS,
-  SUCCESS_STATUS,
-} from "../../../../../../../constants/api";
+import {Icon} from 'react-native-elements';
+import Button from '../../../../../../../components/button';
+import Header from '../../../../../../../components/header';
+import Hyperlink from '../../../../../../../components/hyperlink';
+import {AGENT_TYPE_ID, APPLICATION} from '../../../../../../../constants';
+import {ERROR_STATUS, SUCCESS_STATUS} from '../../../../../../../constants/api';
 import {
   COLOUR_BLACK,
   COLOUR_BLUE,
@@ -25,25 +22,25 @@ import {
   CONTENT_LIGHT,
   FONT_FAMILY_BODY_SEMIBOLD,
   FONT_SIZE_TITLE,
-} from "../../../../../../../constants/styles";
-import Onboarding from "../../../../../../../services/api/resources/onboarding";
-import Platform from "../../../../../../../services/api/resources/platform";
+} from '../../../../../../../constants/styles';
+import Onboarding from '../../../../../../../services/api/resources/onboarding';
+import Platform from '../../../../../../../services/api/resources/platform';
 import {
   resetApplication,
   updateApplication,
-} from "../../../../../../../services/redux/actions/fmpa-tunnel";
+} from '../../../../../../../services/redux/actions/fmpa-tunnel';
 import {
   hideNavigator,
   showNavigator,
-} from "../../../../../../../services/redux/actions/navigation";
-import { setIsFastRefreshPending } from "../../../../../../../services/redux/actions/tunnel";
-import { onboardingService } from "../../../../../../../setup/api";
-import { flashMessage } from "../../../../../../../utils/dialog";
-import sanitizePhoneNumber from "../../../../../../../utils/sanitizers/phone-number";
-import { deleteData, saveData } from "../../../../../../../utils/storage";
-import FipProgressBar from "../../components/fip-progress-bar";
-import { VerifyWalletPhone } from "../../components/verify-wallet-phone";
-import FipPersonalDetailsAgentForm from "./personal-details-form";
+} from '../../../../../../../services/redux/actions/navigation';
+import {setIsFastRefreshPending} from '../../../../../../../services/redux/actions/tunnel';
+import {onboardingService} from '../../../../../../../setup/api';
+import {flashMessage} from '../../../../../../../utils/dialog';
+import sanitizePhoneNumber from '../../../../../../../utils/sanitizers/phone-number';
+import {deleteData, saveData} from '../../../../../../../utils/storage';
+import FipProgressBar from '../../components/fip-progress-bar';
+import {VerifyWalletPhone} from '../../components/verify-wallet-phone';
+import FipPersonalDetailsAgentForm from './personal-details-form';
 
 class FipAgentPersonalDetailsScene extends React.Component {
   onboarding = new Onboarding();
@@ -61,11 +58,11 @@ class FipAgentPersonalDetailsScene extends React.Component {
           nextOfKin: {},
         },
         businessDetails: {},
-        howYouHeardAboutUs: "Referred by an Agent",
+        howYouHeardAboutUs: 'Referred by an Agent',
       },
       isLoading: false,
       showSuccessModal: false,
-      slide: "PERSONAL INFORMATION",
+      slide: 'PERSONAL INFORMATION',
       superAgents: [],
       isFromApplicationPreview: null,
       kycId: null,
@@ -92,19 +89,17 @@ class FipAgentPersonalDetailsScene extends React.Component {
     this.fetchSuperAgents();
     this.checkIncomingRoute();
     this.backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      this.handleBackButtonPress
+      'hardwareBackPress',
+      this.handleBackButtonPress,
     );
-    const isFromApplicationPreview = this.props.navigation.getParam(
-      "isFromApplicationPreview"
-    );
-    const kycId = this.props.navigation.getParam("kycId");
-    const fipAgentValidatedDetails = this.props.navigation.getParam(
-      "bvnData",
-      {}
-    );
-    console.log(fipAgentValidatedDetails, "data bvn");
-    console.log(kycId, "person kycid");
+    const {
+      isFromApplicationPreview,
+      kycId,
+      bvnData: fipAgentValidatedDetails,
+    } = this.props.route.params || {};
+
+    console.log(fipAgentValidatedDetails, 'data bvn');
+    console.log(kycId, 'person kycid');
     this.setState({
       isFromApplicationPreview: isFromApplicationPreview,
       kycId: kycId,
@@ -116,9 +111,9 @@ class FipAgentPersonalDetailsScene extends React.Component {
   }
 
   async fetchSuperAgents() {
-    const { response, status } = await this.platform.retrieveSuperAgents();
+    const {response, status} = await this.platform.retrieveSuperAgents();
 
-    console.log({ response, status });
+    console.log({response, status});
 
     if (status === SUCCESS_STATUS) {
       this.setState({
@@ -132,9 +127,9 @@ class FipAgentPersonalDetailsScene extends React.Component {
   }
 
   checkIncomingRoute = () => {
-    console.log(this.props.navigationState.previousScreen, "routeee");
-    if (this.props.navigationState.previousScreen === "Login") {
-      this.props.navigation.replace("HomeTabs");
+    console.log(this.props.navigationState.previousScreen, 'routeee');
+    if (this.props.navigationState.previousScreen === 'Login') {
+      this.props.navigation.replace('HomeTabs');
       return;
     }
   };
@@ -143,7 +138,7 @@ class FipAgentPersonalDetailsScene extends React.Component {
     const formIsComplete = this.form.state.isComplete;
     const formIsValid = this.form.state.isValid;
 
-    console.log({ formIsComplete, formIsValid });
+    console.log({formIsComplete, formIsValid});
 
     if (!formIsComplete) {
       this.setState({
@@ -175,33 +170,32 @@ class FipAgentPersonalDetailsScene extends React.Component {
 
       const serializedForm = this.form.serializeFormData();
 
-      console.log({ serializedForm });
+      console.log({serializedForm});
 
       const application = {
         ...serializedForm,
         phoneNumber: sanitizePhoneNumber(serializedForm.phoneNumber),
         walletPhoneNumber: sanitizePhoneNumber(
-          serializedForm.walletPhoneNumber
+          serializedForm.walletPhoneNumber,
         ),
       };
 
-      console.log(application, "updated form");
-      const saveAsDraftResponse = await onboardingService.saveFipPersonalDetails(
-        application
-      );
-      console.log(saveAsDraftResponse, "responseee");
+      console.log(application, 'updated form');
+      const saveAsDraftResponse =
+        await onboardingService.saveFipPersonalDetails(application);
+      console.log(saveAsDraftResponse, 'responseee');
 
       const saveAsDraftResponseStatus = saveAsDraftResponse.status;
       const saveAsDraftResponseObj = saveAsDraftResponse.response;
 
-      console.log({ saveAsDraftResponseObj, saveAsDraftResponse });
+      console.log({saveAsDraftResponseObj, saveAsDraftResponse});
 
       if (saveAsDraftResponseStatus === ERROR_STATUS) {
         flashMessage(
           null,
           saveAsDraftResponse?.response?.description
             ? saveAsDraftResponse.response.description
-            : "Oops! Something went wrong. Please try again"
+            : 'Oops! Something went wrong. Please try again',
         );
         this.setState({
           isLoading: false,
@@ -220,9 +214,9 @@ class FipAgentPersonalDetailsScene extends React.Component {
         showOtpModal: false,
       });
 
-      this.props.navigation.navigate("FipAgentBusinessInformation");
+      this.props.navigation.navigate('FipAgentBusinessInformation');
     } catch (err) {
-      console.log(err, "personal err");
+      console.log(err, 'personal err');
       this.setState({
         isLoading: false,
         showOtpModal: false,
@@ -232,24 +226,24 @@ class FipAgentPersonalDetailsScene extends React.Component {
 
   onGoBack = () => {
     if (this.state.isFromApplicationPreview) {
-      this.props.navigation.replace("FipAgentApplicationPreview");
+      this.props.navigation.replace('FipAgentApplicationPreview');
       return;
     }
-    this.props.navigation.navigate("HomeTabs");
+    this.props.navigation.navigate('HomeTabs');
   };
 
   clearCacheData = async () => {
-    await deleteData("fipAgentBvnData");
+    await deleteData('fipAgentBvnData');
   };
 
   updateShowOtpModal = () => {
-    this.setState({ showOtpModal: false });
+    this.setState({showOtpModal: false});
   };
   stopLoader = () => {
-    this.setState({ isLoading: false });
+    this.setState({isLoading: false});
   };
   startloader = () => {
-    this.setState({ isLoading: true });
+    this.setState({isLoading: true});
   };
 
   onSendOtpRequest = async () => {
@@ -258,27 +252,27 @@ class FipAgentPersonalDetailsScene extends React.Component {
     if (!isFormValid) {
       return;
     }
-    this.setState({ isSendingOtp: true });
+    this.setState({isSendingOtp: true});
     try {
       const payload = {
         phoneNumber: this.form?.state?.form?.walletPhone,
         jobId: this.state.kycId,
       };
-      console.log(payload, "otp pay");
+      console.log(payload, 'otp pay');
 
       const res = await onboardingService.sendWalletPhonOtpRequest(payload);
 
-      const { status, code, response } = res;
-      console.log(res, "restooo");
+      const {status, code, response} = res;
+      console.log(res, 'restooo');
 
       if (status === ERROR_STATUS) {
         flashMessage(
           null,
           response?.description
             ? response.description
-            : "Oops! Something went wrong while sending OTP to your preferred wallet number"
+            : 'Oops! Something went wrong while sending OTP to your preferred wallet number',
         );
-        this.setState({ isSendingOtp: false });
+        this.setState({isSendingOtp: false});
 
         return;
       }
@@ -289,21 +283,19 @@ class FipAgentPersonalDetailsScene extends React.Component {
         isSendingOtp: false,
       });
     } catch (err) {
-      console.log(err, "err");
-      this.setState({ isSendingOtp: false });
-      flashMessage(null, "Oops! Something went wrong. Please try again later.");
+      console.log(err, 'err');
+      this.setState({isSendingOtp: false});
+      flashMessage(null, 'Oops! Something went wrong. Please try again later.');
     }
   };
 
   render() {
-    const { superAgents } = this.state;
-    const { application } = this.props;
+    const {superAgents} = this.state;
+    const {application} = this.props;
 
     if (!this.state.animationsDone) {
       return (
-        <View
-          style={{ alignItems: "center", flex: 1, justifyContent: "center" }}
-        >
+        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center'}}>
           <ActivityIndicator size="large" color={COLOUR_BLUE} />
         </View>
       );
@@ -318,8 +310,7 @@ class FipAgentPersonalDetailsScene extends React.Component {
         style={{
           backgroundColor: COLOUR_WHITE,
           flex: 1,
-        }}
-      >
+        }}>
         {this.state.showSuccessModal && this.successModal}
 
         <Header
@@ -340,46 +331,44 @@ class FipAgentPersonalDetailsScene extends React.Component {
           // rightComponent={skipButton}
           // rightComponent={this.toShowSkipButton ? skipButton : null}
           statusBarProps={{
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             barStyle: CONTENT_LIGHT,
           }}
           title="Setup New Agent"
           titleStyle={{
             color: COLOUR_WHITE,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: FONT_SIZE_TITLE,
           }}
           hideNavigationMenu={this.props.hideNavigator}
           showNavigationMenu={this.props.showNavigator}
           withNavigator={this.props.withNavigator}
         />
-        <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <View style={{width: '95%', alignSelf: 'center', marginBottom: 15}}>
           <FipProgressBar step="5" />
         </View>
         <ScrollView>
           <View
             style={{
               flex: 1,
-              width: "90%",
-              alignSelf: "center",
-            }}
-          >
+              width: '90%',
+              alignSelf: 'center',
+            }}>
             <Text
               style={{
                 color: COLOUR_BLACK,
                 fontFamily: FONT_FAMILY_BODY_SEMIBOLD,
                 fontSize: 20,
                 lineHeight: 24,
-                fontWeight: "600",
+                fontWeight: '600',
                 marginBottom: 18,
-              }}
-            >
+              }}>
               Personal Details
             </Text>
             <FipPersonalDetailsAgentForm
               isDisabled={this.state.isLoading}
               propagateFormErrors={this.state.propagateFormErrors}
-              ref={(form) => (this.form = form)}
+              ref={form => (this.form = form)}
               superAgents={superAgents}
               application={application}
               kycId={this.state.kycId}
@@ -408,9 +397,9 @@ class FipAgentPersonalDetailsScene extends React.Component {
               title="CONTINUE"
               containerStyle={{
                 marginVertical: 15,
-                backgroundColor: "#00425F",
+                backgroundColor: '#00425F',
               }}
-              buttonStyle={{ backgroundColor: "#00425F" }}
+              buttonStyle={{backgroundColor: '#00425F'}}
             />
           </View>
         </ScrollView>
@@ -433,16 +422,14 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     hideNavigator: () => dispatch(hideNavigator()),
-    setIsFastRefreshPending: (value) =>
-      dispatch(setIsFastRefreshPending(value)),
+    setIsFastRefreshPending: value => dispatch(setIsFastRefreshPending(value)),
     showNavigator: () => dispatch(showNavigator()),
     resetApplication: () => dispatch(resetApplication()),
-    updateApplication: (application) =>
-      dispatch(updateApplication(application)),
+    updateApplication: application => dispatch(updateApplication(application)),
   };
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FipAgentPersonalDetailsScene);

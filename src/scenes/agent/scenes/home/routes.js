@@ -63,6 +63,17 @@ import FundWalletViaUssdScene from './scenes/fund-wallet-ussd';
 import NotificationsScene from './scenes/notifications';
 import UnloadCommissionScene from './scenes/unload-commission';
 
+import CacCancelScreen from '../cac-registration/scenes/cancel-screen';
+import CacKycDetails from '../cac-registration/scenes/kyc-details';
+import CacTinDetails from '../cac-registration/scenes/tin-details';
+
+import CacBusinessDetails from '../cac-registration/scenes/business-details';
+import CacBusinessName from '../cac-registration/scenes/business-name';
+import CacInsuffiecientFunds from '../cac-registration/scenes/insuffiecient-funds';
+import CacPersonalDetails from '../cac-registration/scenes/personal-details';
+import CacSuccess from '../cac-registration/scenes/success';
+import CacUnsuccessfulPayment from '../cac-registration/scenes/unsuccessful-payment';
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -243,6 +254,19 @@ export default function AppNavigator() {
         component={SelfOnboardingApplicationPreview}
       />
       <Stack.Screen name="Logout" component={LogoutScene} />
+
+      <Stack.Screen name="CancelPayment" component={CacCancelScreen} />
+      <Stack.Screen name="CacTinDetails" component={CacTinDetails} />
+      <Stack.Screen name="InsufficientFund" component={CacInsuffiecientFunds} />
+      <Stack.Screen name="Congratulation" component={CacSuccess} />
+      <Stack.Screen
+        name="CacUnsuccessfulPayment"
+        component={CacUnsuccessfulPayment}
+      />
+      <Stack.Screen name="CacBusinessDetails" component={CacBusinessDetails} />
+      <Stack.Screen name="CacKycDetails" component={CacKycDetails} />
+      <Stack.Screen name="CacPersonalDetails" component={CacPersonalDetails} />
+      <Stack.Screen name="CacBusinessNameDetails" component={CacBusinessName} />
     </Stack.Navigator>
   );
 }

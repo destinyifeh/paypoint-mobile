@@ -64,6 +64,7 @@ import {
   SHOW_CBN_COMPLIANCE,
 } from '../../../../../../../constants/api-resources';
 import {
+  BLOCKER,
   CASUAL,
   UNIMPORTANT,
 } from '../../../../../../../constants/dialog-priorities';
@@ -1218,6 +1219,29 @@ function ServicesRow({
             />
           )}
         </FeatureFlag>
+
+        <FeatureFlag
+          behaviour={BEHAVIOURS.DISABLE}
+          requiredDomains={[AGENT, APPLICANT]}
+          uid="register-cac-service-thumbnail">
+          {featureProps => (
+            <ServiceThumbnail
+              isDisabled={featureProps.isDisabled || isDisabled}
+              icon="briefcase"
+              colours={['#2CBC65', '#2CBC65']}
+              //category="Pay a Bill"
+              text={`Register\nwith CAC`}
+              onPress={() =>
+                // navigation.replace("CacBusinessNameDetails", {
+                //   cacRegType: "assisted",
+                // })
+                flashMessage('Stay tuned!', 'Coming soon', BLOCKER)
+              }
+              {...props}
+              {...featureProps}
+            />
+          )}
+        </FeatureFlag>
       </React.Fragment>
     );
   };
@@ -1361,6 +1385,7 @@ class HomeTab extends React.PureComponent {
     showNinUpdateBanner: false,
     kycCheckList: '',
     showCbnPromptModal: false,
+    showProvideKycModal: false,
   };
 
   persistenceKeyPos = 'persistenceKey';
@@ -1389,6 +1414,9 @@ class HomeTab extends React.PureComponent {
       this.renderStatementOfAccountTransactions.bind(this);
     this.openCbnPromptModal = this.openCbnPromptModal.bind(this);
     this.confirmPOSDeliveryStatus = this.confirmPOSDeliveryStatus.bind(this);
+    this.kycModalNextButton = this.kycModalNextButton.bind(this);
+    this.kycModalSkipButton = this.kycModalSkipButton.bind(this);
+    this.clearRegType = this.clearRegType.bind(this);
   }
 
   componentDidMount() {
@@ -1399,11 +1427,14 @@ class HomeTab extends React.PureComponent {
     });
 
     this.confirmPOSDeliveryStatus();
+    this.clearRegType();
 
     loadData(SHOW_STATUS_BAR).then(response => {
       this.setState({
         showStatusCard: response,
+        showProvideKycModal: true,
       });
+      console.log('showProvideKycModal1', this.state.showprovideKycModal);
     });
 
     this.redirectToScreenAfterLogin();
@@ -1447,6 +1478,17 @@ class HomeTab extends React.PureComponent {
             }),
           800,
         );
+    }
+  }
+
+  async clearRegType() {
+    const savedCacRegType = JSON.parse(await loadData('CAC REG TYPE'));
+    console.log('CACREGTYPE1', savedCacRegType);
+    if (savedCacRegType === 'assisted') {
+      console.log('CACREGTYPE2', savedCacRegType);
+      await saveData('CAC REG TYPE', '');
+      const savedCacRegType2 = JSON.parse(await loadData('CAC REG TYPE'));
+      console.log('CACREGTYPE3', savedCacRegType2);
     }
   }
 
@@ -1546,6 +1588,19 @@ class HomeTab extends React.PureComponent {
       this.rateThisAppMenu.open();
     }
   }
+
+  kycModalNextButton = () => {
+    this.setState({showprovideKycModal: false}, () => {
+      this.props.navigation.navigate('CacTinDetails');
+      console.log('showProvideKycModal2', this.state.showprovideKycModal);
+    });
+  };
+
+  kycModalSkipButton = () => {
+    this.setState({showprovideKycModal: false}, () => {
+      console.log('showProvideKycModa3', this.state.showprovideKycModal);
+    });
+  };
 
   daydifference(dt1) {
     const currentDate = new Date().getTime();
@@ -2030,7 +2085,7 @@ class HomeTab extends React.PureComponent {
         walletJournalTypeId,
         order,
       );
-
+    console.log(response, status, 'dondon');
     if (status === ERROR_STATUS) {
       flashMessage(null, await handleErrorResponse(response), UNIMPORTANT);
 
@@ -2483,6 +2538,17 @@ class HomeTab extends React.PureComponent {
             this.ninRestrictedAccountAlertMenu.current?.close()
           }
         />
+        {/* <ProvideKycModal
+          navigation={this.props.navigation}
+          showprovideKycModal={this.state.showprovideKycModal}
+          onPressNext={() => {
+            this.setState({ showprovideKycModal: false });
+            this.props.navigation.navigate("CacBusinessNameDetails");
+          }}
+          onSkip={() => {
+            this.setState({ showprovideKycModal: false });
+          }}
+        /> */}
 
         <View
           nativeID=""

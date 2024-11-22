@@ -39,10 +39,11 @@ export default function BroadcastMessageScene({
   navigation,
   onContinueButtonClick,
   withBackButton,
+  route,
   ...props
 }) {
-  const message = this.props.route?.params?.message || null;
-  const subMessage = this.props.route?.params?.subMessage || null;
+  const message = route?.params?.message || null;
+  const subMessage = route?.params?.subMessage || null;
 
   useEffect(() => {
     logEvent(BROADCAST_MESSAGE_READ);
