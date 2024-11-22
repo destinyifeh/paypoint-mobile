@@ -20,4 +20,36 @@ export default class TransactionV1 {
       endpoint: `union/banks`,
     });
   }
+
+  initiateCacRegistration(
+    checksum,
+    transactionType,
+    cacInitiateRequest,
+    deviceUuid
+  ) {
+    return this.apiRequester.post({
+      endpoint: "cac-registration/initialize",
+      body: {
+        checksum,
+        transactionType,
+        cacInitiateRequest
+      },
+      headers: {
+        deviceUuid,
+      },
+    });
+  }
+
+  cacRegistrationProceed(
+    proceedPayload,
+    deviceUuid
+  ) {
+    return this.apiRequester.post({
+      endpoint: "cac-registration/proceed",
+      body: proceedPayload,
+      headers: {
+        deviceUuid,
+      },
+    });
+  }
 }

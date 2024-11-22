@@ -1,5 +1,5 @@
-import {ONBOARDING_API_BASE_URL} from '../../../constants/api-resources';
-import Requester from '../finch-requester';
+import { ONBOARDING_API_BASE_URL } from "../../../constants/api-resources";
+import Requester from "../finch-requester";
 
 const API_BASE_URL = ONBOARDING_API_BASE_URL;
 
@@ -17,17 +17,17 @@ export default class Onboarding {
 
   approveApplication(application) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/v2/finch-onboarding/approval',
+      endpoint: "v2/finch-onboarding/v2/finch-onboarding/approval",
       body: {
         applicationID: application.applicationId,
-        approvalStatus: '2',
+        approvalStatus: "2",
       },
     });
   }
 
   createApplication(data) {
     return this.apiRequester.post({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       args: {
         draft: true,
       },
@@ -36,13 +36,13 @@ export default class Onboarding {
   }
   createApplicationForFailedBvn(data, token) {
     return this.apiRequester.post({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       args: {
         draft: true,
       },
       body: data,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
@@ -50,10 +50,10 @@ export default class Onboarding {
 
   declineApplication(application) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/approval',
+      endpoint: "v2/finch-onboarding/approval",
       body: {
         applicationID: application.applicationId,
-        approvalStatus: '3',
+        approvalStatus: "3",
       },
     });
   }
@@ -78,7 +78,7 @@ export default class Onboarding {
 
   getApplicationsByApprovalStatus(status) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       args: {
         status,
       },
@@ -87,7 +87,7 @@ export default class Onboarding {
 
   getMyApplicationsByApprovalStatus(status, pageNo) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/applications/me',
+      endpoint: "v2/finch-onboarding/applications/me",
       args: {
         status,
       },
@@ -96,7 +96,7 @@ export default class Onboarding {
 
   getApplicationByApplicationType(applicationType) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       args: {},
     });
   }
@@ -115,20 +115,20 @@ export default class Onboarding {
 
   getMyApplications(args) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/v2/applications/me',
+      endpoint: "v2/finch-onboarding/v2/applications/me",
       args,
     });
   }
 
   ping() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/draft',
+      endpoint: "v2/finch-onboarding/draft",
     });
   }
 
   saveApplication(data) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       body: data,
       args: {
         draft: true,
@@ -138,7 +138,7 @@ export default class Onboarding {
 
   saveAsDraft(application) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       body: application,
       args: {
         draft: true,
@@ -148,20 +148,20 @@ export default class Onboarding {
 
   searchApplications(args) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-onboarding/applications/v2/search',
+      endpoint: "v2/finch-onboarding/applications/v2/search",
       args,
     });
   }
 
   searchMyApplications() {
     return this.apiRequester.get({
-      endpoint: 'v3/finch-onboarding/applications/search',
+      endpoint: "v3/finch-onboarding/applications/search",
     });
   }
 
   signUp(data, headers, params) {
     return this.apiRequester.post({
-      endpoint: 'v2/finch-onboarding/signup',
+      endpoint: "v2/finch-onboarding/signup",
       body: data,
       headers,
       args: params,
@@ -171,7 +171,7 @@ export default class Onboarding {
   submit(application, selfOnboarding = false) {
     if (selfOnboarding == true) {
       return this.apiRequester.post({
-        endpoint: 'v3/finch-onboarding/applications',
+        endpoint: "v3/finch-onboarding/applications",
         body: application,
         args: {
           draft: false,
@@ -179,7 +179,7 @@ export default class Onboarding {
       });
     } else {
       return this.apiRequester.put({
-        endpoint: 'v2/finch-onboarding/applications',
+        endpoint: "v2/finch-onboarding/applications",
         body: application,
         args: {
           draft: false,
@@ -190,7 +190,7 @@ export default class Onboarding {
 
   submitApplication(data) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/applications',
+      endpoint: "v2/finch-onboarding/applications",
       body: data,
       args: {
         draft: false,
@@ -200,10 +200,10 @@ export default class Onboarding {
 
   validateApplication(application) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-onboarding/approval',
+      endpoint: "v2/finch-onboarding/approval",
       body: {
         applicationID: application.applicationId,
-        approvalStatus: '1',
+        approvalStatus: "1",
       },
     });
   }
@@ -220,7 +220,7 @@ export default class Onboarding {
 
   BvnConfirmation(bvn) {
     return this.apiRequester.post({
-      endpoint: 'v3/finch-onboarding/bvn/confirmation',
+      endpoint: "v3/finch-onboarding/bvn/confirmation",
       body: {
         bvnNumber: bvn,
       },
@@ -228,7 +228,7 @@ export default class Onboarding {
   }
   backupBvnConfirmation(bvn) {
     return this.apiRequester.post({
-      endpoint: 'v3/finch-onboarding/bvn/confirmation',
+      endpoint: "v3/finch-onboarding/bvn/confirmation",
       body: {
         bvnNumber: bvn,
       },
@@ -257,7 +257,7 @@ export default class Onboarding {
 
   createPersonalDetailsAggregator(application) {
     return this.apiRequester.post({
-      endpoint: 'v3/finch-onboarding/applications',
+      endpoint: "v3/finch-onboarding/applications",
       body: application,
       args: {
         draft: true,
@@ -268,21 +268,21 @@ export default class Onboarding {
   async documentUpload(applicationId, documentType, file) {
     let fileType = file.type;
     if (fileType === null) {
-      const fileNameSplitted = file.fileName.split('.');
+      const fileNameSplitted = file.fileName.split(".");
       const fileExtension = fileNameSplitted[fileNameSplitted.length - 1];
 
       switch (fileExtension) {
-        case 'jpg':
-          fileType = 'image/jpeg';
+        case "jpg":
+          fileType = "image/jpeg";
           break;
         default:
-          fileType = 'image';
+          fileType = "image";
           break;
       }
     }
 
     const formData = new FormData();
-    formData.append('file', {
+    formData.append("file", {
       name: file.fileName,
       filename: file.fileName,
       uri: file.uri,
@@ -290,11 +290,11 @@ export default class Onboarding {
     });
 
     return this.apiRequester.post({
-      endpoint: 'v2/finch-onboarding/document',
+      endpoint: "v2/finch-onboarding/document",
       headers: {
         applicationId,
         documentType,
-        'content-type': 'multipart/x-www-form-data',
+        "content-type": "multipart/x-www-form-data",
       },
       body: formData,
     });
@@ -303,14 +303,14 @@ export default class Onboarding {
   async documentUploadAggregator(applicationId, docType, file) {
     const formData = new FormData();
     const kycDocType =
-      docType === 'Government Issued ID' ? 'ID_CARD' : 'PASSPORT_PHOTO';
-    formData.append('kycDoc', file);
+      docType === "Government Issued ID" ? "ID_CARD" : "PASSPORT_PHOTO";
+    formData.append("kycDoc", file);
 
     return this.apiRequester.post({
       endpoint: `v3/finch-onboarding/applications/${applicationId}/documents`,
       headers: {
         kycDocType,
-        'content-type': 'multipart/x-www-form-data',
+        "content-type": "multipart/x-www-form-data",
       },
       body: formData,
     });
@@ -398,7 +398,9 @@ export default class Onboarding {
 
   sendWalletPhonOtpRequest(payload) {
     return this.apiRequester.post({
-      endpoint: `v3/finch-onboarding/otp/${payload.phoneNumber}/${payload.jobId}`,
+      endpoint: `v3/finch-onboarding/otp/${payload.phoneNumber}/${
+        payload.jobId
+      }`,
     });
   }
 
@@ -448,21 +450,21 @@ export default class Onboarding {
   async fipStateDocumentUpload(documentType, file) {
     let fileType = file.type;
     if (fileType === null) {
-      const fileNameSplitted = file.fileName.split('.');
+      const fileNameSplitted = file.fileName.split(".");
       const fileExtension = fileNameSplitted[fileNameSplitted.length - 1];
 
       switch (fileExtension) {
-        case 'jpg':
-          fileType = 'image/jpeg';
+        case "jpg":
+          fileType = "image/jpeg";
           break;
         default:
-          fileType = 'image';
+          fileType = "image";
           break;
       }
     }
 
     const formData = new FormData();
-    formData.append('file', {
+    formData.append("file", {
       name: file.fileName,
       filename: file.fileName,
       uri: file.uri,
@@ -470,10 +472,10 @@ export default class Onboarding {
     });
 
     return this.apiRequester.post({
-      endpoint: 'v4/finch-onboarding/letter',
+      endpoint: "v4/finch-onboarding/letter",
       headers: {
         documentType,
-        'content-type': 'multipart/x-www-form-data',
+        "content-type": "multipart/x-www-form-data",
       },
       body: formData,
     });

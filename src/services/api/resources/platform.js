@@ -1,6 +1,6 @@
-import Requester from '../finch-requester';
+import Requester from "../finch-requester";
 
-import {PLATFORM_API_BASE_URL} from '../../../constants/api-resources';
+import { PLATFORM_API_BASE_URL } from "../../../constants/api-resources";
 
 const API_BASE_URL = PLATFORM_API_BASE_URL;
 
@@ -25,7 +25,7 @@ export default class Platform {
 
   getAgentsUnderAggregator() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/agents/search',
+      endpoint: "v2/finch-platform-service/agents/search",
       cache: true,
       cacheDuration: 600,
     });
@@ -39,26 +39,26 @@ export default class Platform {
 
   getCurrentAgent(headers) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/agents/me',
+      endpoint: "v2/finch-platform-service/agents/me",
       headers,
     });
   }
 
   getCurrentUser() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/users/me',
+      endpoint: "v2/finch-platform-service/users/me",
     });
   }
 
   getWalletStatus() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/wallet/status',
+      endpoint: "v2/finch-platform-service/wallet/status",
     });
   }
 
   retrieveSuperAgents() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/super-agents/list',
+      endpoint: "v2/finch-platform-service/super-agents/list",
       cache: true,
     });
   }
@@ -71,7 +71,7 @@ export default class Platform {
 
   retrieveUserByEmail(email) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/users/retrieve',
+      endpoint: "v2/finch-platform-service/users/retrieve",
       args: {
         email,
       },
@@ -89,7 +89,7 @@ export default class Platform {
 
   retrieveAgents() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/agents/me',
+      endpoint: "v2/finch-platform-service/agents/me",
       args: {
         domainTypeId: 4,
       },
@@ -98,7 +98,7 @@ export default class Platform {
 
   retrieveCountries(pageNumber, pageSize, searchTerm) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/countries',
+      endpoint: "v2/finch-platform-service/countries",
       args: {
         pageNum: pageNumber,
         pageSize: pageSize,
@@ -115,7 +115,7 @@ export default class Platform {
 
   retrieveRegions() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/regions',
+      endpoint: "v2/finch-platform-service/regions",
     });
   }
 
@@ -127,26 +127,26 @@ export default class Platform {
 
   retrieveWards() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/wards',
+      endpoint: "v2/finch-platform-service/wards",
     });
   }
 
   createRole(payload) {
     return this.apiRequester.post({
-      endpoint: 'v2/finch-platform-service/users/roles/create',
+      endpoint: "v2/finch-platform-service/users/roles/create",
       body: payload,
     });
   }
 
   retrieveRoles() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/users/roles',
+      endpoint: "v2/finch-platform-service/users/roles",
     });
   }
 
   retrieveRolePermissions(roleName) {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/users/role/permissions',
+      endpoint: "v2/finch-platform-service/users/role/permissions",
       args: {
         roleName,
       },
@@ -155,7 +155,7 @@ export default class Platform {
 
   removeRolePermission(name, permissions) {
     return this.apiRequester.put({
-      endpoint: 'v2/finch-platform-service/users/roles/permission/delete',
+      endpoint: "v2/finch-platform-service/users/roles/permission/delete",
       body: {
         name,
         permissions,
@@ -165,20 +165,20 @@ export default class Platform {
 
   createUser(payload) {
     return this.apiRequester.post({
-      endpoint: 'v2/finch-platform-service/users',
+      endpoint: "v2/finch-platform-service/users",
       body: payload,
     });
   }
 
   retrieveUser() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/user',
+      endpoint: "v2/finch-platform-service/user",
     });
   }
 
   retrieveUsers() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/users',
+      endpoint: "v2/finch-platform-service/users",
     });
   }
 
@@ -194,7 +194,7 @@ export default class Platform {
       endpoint: `v3/finch-platform-service/bvn-records/validate/bvn`,
       body: payload,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
@@ -239,7 +239,7 @@ export default class Platform {
   }
   agentCount() {
     return this.apiRequester.get({
-      endpoint: 'v2/finch-platform-service/agents/search/count',
+      endpoint: "v2/finch-platform-service/agents/search/count",
       args: {},
     });
   }
@@ -247,13 +247,13 @@ export default class Platform {
   documentUploadAggregatorClass(agentCode, kycDocType, file) {
     const formData = new FormData();
 
-    formData.append('kycDoc', file);
+    formData.append("kycDoc", file);
 
     return this.apiRequester.post({
       endpoint: `v5/finch-platform-service/agents/${agentCode}/upgrade-requests/documents`,
       headers: {
         kycDocType,
-        'content-type': 'multipart/form-data',
+        "content-type": "multipart/form-data",
       },
       body: formData,
     });
@@ -290,7 +290,7 @@ export default class Platform {
       endpoint: `v2/finch-platform-service/kyc-records/validate`,
       body: requestBody,
       headers: {
-        validationType: 'NIN',
+        validationType: "NIN",
         forceVerification: true,
       },
     });
@@ -301,7 +301,7 @@ export default class Platform {
       endpoint: `v2/finch-platform-service/kyc-records/validate`,
       body: requestBody,
       headers: {
-        validationType: 'BVN',
+        validationType: "BVN",
         forceVerification: false,
       },
     });

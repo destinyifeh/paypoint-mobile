@@ -313,12 +313,6 @@ export const REMOTE_CONFIG_REFRESH_INTERVAL_IN_SECONDS = 45;
 
 export const DISABLE_PROFILE_FIELDS = true;
 
-// export const CODE_PUSH_OPTIONS = {
-//   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-//   installMode: CodePush.InstallMode.IMMEDIATE,
-//   deploymentKey: CODE_PUSH_DEPLOYMENT_KEY,
-// };
-
 export const PRINTER_DRIVER_PACKAGE_NAME = 'ru.a402d.rawbtprinter';
 
 export const APP_LOGO_ASSET_PATH = 'images/paypoint.png';

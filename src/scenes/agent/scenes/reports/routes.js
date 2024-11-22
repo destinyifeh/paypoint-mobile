@@ -5,6 +5,10 @@ import AggregatorCommissionsWithdrawalDetails from '../../../aggregator/scenes/c
 import CommissionsEarnedDashBoard from '../../../aggregator/scenes/commissions/scene';
 import UnloadCommissionScene from '../home/scenes/unload-commission';
 import BankNetwork from './bank-network';
+import CacReport from './cac-report';
+import ReportCacFilterScene from './cac-report-filter/scene';
+import CacReportDetails from './cac-report/cac-reg-details';
+import ReportDetailsCac from './cac-report/cac-reg-details/report-details-scene';
 import CommissionsEarned from './commissions-earned';
 import CommissionsEarnedFilterScene from './commissions-earned-filter';
 import AddIssueScene from './crm-service/add-issue';
@@ -62,6 +66,10 @@ const AppNavigator = () => (
       component={StatementOfAccountFilterScene}
     />
     <Stack.Screen name="TransactionSummary" component={TransactionSummary} />
+    <Stack.Screen name="ReportCacFilter" component={ReportCacFilterScene} />
+    <Stack.Screen name="ReportDetailsCac" component={ReportDetailsCac} />
+    <Stack.Screen name="CacReportDetails" component={CacReportDetails} />
+    <Stack.Screen name="CacReports" component={CacReport} />
   </Stack.Navigator>
 );
 

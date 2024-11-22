@@ -1,5 +1,11 @@
 import React from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  BackHandler,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Button from "../components/button";
 import Text from "../components/text";
 import {
@@ -17,6 +23,20 @@ export const CbnRequirementUpdate = (props) => {
   React.useEffect(() => {
     forceUserToUpdate();
   }, []);
+
+  React.useEffect(() => {
+    if (props.showCbnPromptModa) {
+      const handleBackButtonPress = () => {
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackButtonPress
+      );
+      return () => backHandler.remove();
+    }
+  }, [props.showCbnPromptModal]);
 
   const checkCbnUpdatePeriod = () => {
     const currentDate = new Date();
@@ -62,9 +82,9 @@ export const CbnRequirementUpdate = (props) => {
         animationType="slide"
         transparent={true}
         visible={props.showCbnPromptModal}
-        onRequestClose={() => {
-          props.updateCbnPromptModal();
-        }}
+        // onRequestClose={() => {
+        //   props.updateCbnPromptModal();
+        // }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -117,7 +137,7 @@ export const CbnRequirementUpdate = (props) => {
                 }}
               />
             </View>
-            {!force && (
+            {force && (
               <View
                 style={{
                   flexDirection: "row",
@@ -146,7 +166,7 @@ export const CbnRequirementUpdate = (props) => {
               </View>
             )}
 
-            {force && (
+            {!force && (
               <View
                 style={{
                   paddingVertical: 20,

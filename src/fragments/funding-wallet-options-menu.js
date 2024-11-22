@@ -58,6 +58,7 @@ class FundingWalletOptionsMenu extends React.Component {
       ref_,
       remoteConfig: { enable_quickteller_funding, enable_webpay_funding },
       requestClose,
+      screenShown
     } = this.props;
 
     const isQuicktellerFundingDisabled = !enable_quickteller_funding;
@@ -144,7 +145,9 @@ class FundingWalletOptionsMenu extends React.Component {
           {SHOW_FUND_VIA_USSD && (
             <ClickableListItem
               onPress={() => {
-                navigation.navigate("FundWalletViaUssd");
+                navigation.navigate("FundWalletViaUssd",{
+                  previousScreen: screenShown,
+                });
                 requestClose();
               }}
               style={{
@@ -231,7 +234,7 @@ class FundingWalletOptionsMenu extends React.Component {
           <ClickableListItem
             disabled={isWebPayFundingDisabled}
             onPress={() => {
-              navigation.navigate("FundWalletInApp");
+              navigation.navigate("FundWalletInApp", { previousScreen: screenShown,});
               requestClose();
             }}
             style={{

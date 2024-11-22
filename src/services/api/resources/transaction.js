@@ -230,6 +230,25 @@ export default class Transaction {
     });
   }
 
+  initiateCacRegistration(
+    checksum,
+    transactionType,
+    cacInitiateRequest,
+    deviceUuid
+  ) {
+    return this.apiRequester.post({
+      endpoint: "cac-registration/initialize",
+      body: {
+        checksum,
+        transactionType,
+        cacInitiateRequest
+      },
+      headers: {
+        deviceUuid,
+      },
+    });
+  }
+
   processTransaction(
     transactionReference,
     transactionType,
