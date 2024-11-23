@@ -84,7 +84,7 @@ class App extends React.Component {
   componentDidMount() {
     if (__DEV__) {
       // Crashlytics().log('App Mounted');
-      NativeDevSettings.setIsDebuggingRemotely(true);
+      NativeDevSettings.setIsDebuggingRemotely(false);
     }
     store.subscribe(() => {
       const {

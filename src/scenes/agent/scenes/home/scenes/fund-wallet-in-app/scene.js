@@ -1,16 +1,25 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
-import { connect } from 'react-redux';
+import {ScrollView, View} from 'react-native';
+import {connect} from 'react-redux';
 
 import CryptoJS from 'crypto-js';
-import IswMobileSdk, { Environment, IswPaymentInfo, IswSdkConfig } from 'react-native-isw-mobile-sdk';
+import IswMobileSdk, {
+  Environment,
+  IswPaymentInfo,
+  IswSdkConfig,
+} from 'react-native-isw-mobile-sdk';
 
-import { liquidityService } from '../../../../../../../App';
+import {liquidityService} from '../../../../../../../App';
 import Button from '../../../../../../components/button';
 import H1 from '../../../../../../components/h1';
 import Header from '../../../../../../components/header';
 import Hyperlink from '../../../../../../components/hyperlink';
-import { CONTACT_US_EMAIL, PENDING_FUND_WALLET_MESSAGE, SUCCESSFUL_FUND_WALLET_MESSAGE, USER } from '../../../../../../constants';
+import {
+  CONTACT_US_EMAIL,
+  PENDING_FUND_WALLET_MESSAGE,
+  SUCCESSFUL_FUND_WALLET_MESSAGE,
+  USER,
+} from '../../../../../../constants';
 import {
   IN_APP_FUNDING_DROP_OFF,
   IN_APP_FUNDING_INITIATE_CLICK,
@@ -18,70 +27,66 @@ import {
   IN_APP_FUNDING_INITIATE_SUCCESS,
   IN_APP_FUNDING_PROCEED_CLICK,
   IN_APP_FUNDING_PROCEED_FAILURE,
-  IN_APP_FUNDING_PROCEED_SUCCESS
+  IN_APP_FUNDING_PROCEED_SUCCESS,
 } from '../../../../../../constants/analytics';
-import { ERROR_STATUS } from '../../../../../../constants/api';
-import { ENVIRONMENT_IS_TEST } from '../../../../../../constants/api-resources';
-import { BLOCKER } from '../../../../../../constants/dialog-priorities';
-import { COLOUR_WHITE } from '../../../../../../constants/styles';
-import { logEvent } from '../../../../../../core/logger';
-import { setIsFastRefreshPending } from '../../../../../../services/redux/actions/tunnel';
+import {ERROR_STATUS} from '../../../../../../constants/api';
+import {ENVIRONMENT_IS_TEST} from '../../../../../../constants/api-resources';
+import {BLOCKER} from '../../../../../../constants/dialog-priorities';
+import {COLOUR_WHITE} from '../../../../../../constants/styles';
+import {logEvent} from '../../../../../../core/logger';
+import {setIsFastRefreshPending} from '../../../../../../services/redux/actions/tunnel';
 import Base64 from '../../../../../../utils/base-64';
-import { getDeviceDetails } from '../../../../../../utils/device';
-import { flashMessage } from '../../../../../../utils/dialog';
+import {getDeviceDetails} from '../../../../../../utils/device';
+import {flashMessage} from '../../../../../../utils/dialog';
 import handleErrorResponse from '../../../../../../utils/error-handlers/api';
-import { generateChecksum } from '../../../../../../utils/helpers';
-import { loadData } from '../../../../../../utils/storage';
-import { AmountForm } from './form';
+import {generateChecksum} from '../../../../../../utils/helpers';
+import {loadData} from '../../../../../../utils/storage';
+import {AmountForm} from './form';
 import styles from './styles';
-
 
 class FundWalletInAppScene extends React.Component {
   didUserCancel = false;
   state = {
     isLoading: false,
-    user: {
-
-    }
-  }
+    user: {},
+  };
 
   constructor() {
-    super()
+    super();
 
     this.decodeMerchantSecret = this.decodeMerchantSecret.bind(this);
-    this.onSubmitAmountFormButtonPress = this.onSubmitAmountFormButtonPress.bind(this);
+    this.onSubmitAmountFormButtonPress =
+      this.onSubmitAmountFormButtonPress.bind(this);
     this.onWebPayCancel = this.onWebPayCancel.bind(this);
     this.onWebPaySuccess = this.onWebPaySuccess.bind(this);
   }
 
   componentDidMount() {
-    loadData(USER).then(
-      data => {
-        const user = JSON.parse(data);
-        this.setState({
-          user,
-        });
-      }
-    )
+    loadData(USER).then(data => {
+      const user = JSON.parse(data);
+      this.setState({
+        user,
+      });
+    });
 
-    getDeviceDetails().then(
-      data => this.setState({
-        ...data
-      })
-    )
+    getDeviceDetails().then(data =>
+      this.setState({
+        ...data,
+      }),
+    );
   }
 
   _generateChecksum() {
-    const { deviceUuid, user } = this.state;
+    const {deviceUuid, user} = this.state;
     const httpMethod = 'POST';
 
     return generateChecksum(
-      `${user.username}${httpMethod}${this.amount}${httpMethod}${deviceUuid}`
+      `${user.username}${httpMethod}${this.amount}${httpMethod}${deviceUuid}`,
     );
   }
 
   async onSubmitAmountFormButtonPress() {
-    const { deviceUuid } = this.state;
+    const {deviceUuid} = this.state;
 
     const formData = this.amountForm.state.form;
     const formIsComplete = this.amountForm.state.isComplete;
@@ -107,14 +112,14 @@ class FundWalletInAppScene extends React.Component {
 
     logEvent(IN_APP_FUNDING_INITIATE_CLICK);
 
-    const { response, status } = await liquidityService.initializeWebPay(
-      this.amount, 
+    const {response, status} = await liquidityService.initializeWebPay(
+      this.amount,
       this.checksum,
       deviceUuid,
     );
 
-    console.log({response, status})
-    
+    console.log({response, status});
+
     this.setState({
       isLoading: false,
     });
@@ -122,18 +127,14 @@ class FundWalletInAppScene extends React.Component {
     if (status === ERROR_STATUS) {
       logEvent(IN_APP_FUNDING_INITIATE_FAILURE);
 
-      flashMessage(
-        null,
-        await handleErrorResponse(response),
-        BLOCKER
-      );
+      flashMessage(null, await handleErrorResponse(response), BLOCKER);
 
-      return
+      return;
     }
 
     logEvent(IN_APP_FUNDING_INITIATE_SUCCESS);
 
-    console.log(response.data)
+    console.log(response.data);
 
     this.setState({
       ...response.data,
@@ -165,15 +166,15 @@ class FundWalletInAppScene extends React.Component {
       paymentItemCode,
       responseCode,
       transactionRef,
-      user
+      user,
     } = this.state;
-    const narration = "";
+    const narration = '';
 
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
 
-    const { response, status } = await liquidityService.proceedWebPay(
+    const {response, status} = await liquidityService.proceedWebPay(
       {
         amount,
         currencyCode,
@@ -187,17 +188,16 @@ class FundWalletInAppScene extends React.Component {
         responseCode,
         transactionRef,
       },
-      deviceUuid
+      deviceUuid,
     );
 
-    console.log({ response, status });
+    console.log({response, status});
 
     this.setState({
-      isLoading: false
+      isLoading: false,
     });
 
     if (status === ERROR_STATUS) {
-
       this.props.navigation.goBack();
       flashMessage(
         'Transaction in Progress',
@@ -207,26 +207,16 @@ class FundWalletInAppScene extends React.Component {
 
       logEvent(IN_APP_FUNDING_PROCEED_FAILURE);
 
-      return
+      return;
     }
 
     logEvent(IN_APP_FUNDING_PROCEED_SUCCESS);
 
-    setTimeout(
-      () => this.props.setIsFastRefreshPending(true), 
-      200
-    );
+    setTimeout(() => this.props.setIsFastRefreshPending(true), 200);
 
-    flashMessage(
-      'Success',
-      SUCCESSFUL_FUND_WALLET_MESSAGE,
-      BLOCKER,
-    );
+    flashMessage('Success', SUCCESSFUL_FUND_WALLET_MESSAGE, BLOCKER);
 
-    setTimeout(
-      () => this.props.navigation.goBack(),
-      1800
-    )
+    setTimeout(() => this.props.navigation.goBack(), 1800);
   }
 
   decodeMerchantSecret(merchantSecret) {
@@ -237,47 +227,47 @@ class FundWalletInAppScene extends React.Component {
     var encryptString = merchantSecret;
     var decodeBase64 = CryptoJS.enc.Base64.parse(encryptString);
     var decryptedData = CryptoJS.AES.decrypt(
-        {
-            ciphertext: decodeBase64
-        },
-        keyForCryptoJS,
-        {
-            mode: CryptoJS.mode.ECB 
-        }
+      {
+        ciphertext: decodeBase64,
+      },
+      keyForCryptoJS,
+      {
+        mode: CryptoJS.mode.ECB,
+      },
     );
     var decryptedText = decryptedData.toString(CryptoJS.enc.Utf8);
     return decryptedText;
   }
 
   triggerPayment(amount) {
-    const { 
-      currencyCode, 
-      merchantCode, 
+    const {
+      currencyCode,
+      merchantCode,
       merchantId,
       merchantSecret,
-      merchantCustomerName, 
+      merchantCustomerName,
       transactionRef,
-      user
+      user,
     } = this.state;
 
     const decodedMerchantSecret = this.decodeMerchantSecret(merchantSecret);
 
     const config = new IswSdkConfig(
-      merchantId, 
+      merchantId,
       decodedMerchantSecret,
       merchantCode,
-      currencyCode
+      currencyCode,
     );
-    
-    const onSdkInitialized = (isSuccessful) => {
+
+    const onSdkInitialized = isSuccessful => {
       console.log(`WebPay SDK Init Status: ${isSuccessful}`);
-    }
-    
+    };
+
     const env = ENVIRONMENT_IS_TEST ? Environment.TEST : Environment.PRODUCTION;
     IswMobileSdk.initialize(config, env, onSdkInitialized);
 
-    console.log('Paying', amount)
-    
+    console.log('Paying', amount);
+
     const customerId = user.username,
       customerName = merchantCustomerName,
       customerEmail = user.email || CONTACT_US_EMAIL,
@@ -292,15 +282,15 @@ class FundWalletInAppScene extends React.Component {
       customerMobile,
       reference,
       amount,
-    )
+    );
 
-    const userDidComplete = (result) => {
+    const userDidComplete = result => {
       this.onWebPaySuccess();
-    }
+    };
 
-    const userDidCancel = (result) => {
+    const userDidCancel = result => {
       this.onWebPayCancel();
-    }
+    };
 
     IswMobileSdk.pay(paymentInfo, userDidComplete, userDidCancel);
   }
@@ -308,36 +298,36 @@ class FundWalletInAppScene extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header
-          hideNavigationMenu={this.props.hideNavigator}
-          navigationIconColor={COLOUR_WHITE}
-          showNavigationMenu={this.props.showNavigator}
-          statusBarProps={{
-            backgroundColor: 'transparent',
-          }}
-          paypointLogo
-        />
+        <View style={{height: 70, marginBottom: 25}}>
+          <Header
+            hideNavigationMenu={this.props.hideNavigator}
+            navigationIconColor={COLOUR_WHITE}
+            showNavigationMenu={this.props.showNavigator}
+            statusBarProps={{
+              backgroundColor: 'transparent',
+            }}
+            paypointLogo
+          />
+        </View>
 
         <ScrollView contentContainerStyle={styles.scrollView}>
-          
-          <H1 
+          <H1
             style={{
               marginBottom: 30,
-              marginTop: 40, 
+              marginTop: 40,
               textAlign: 'center',
-            }}
-          >
+            }}>
             How much would you like to fund?
           </H1>
-          <AmountForm 
+          <AmountForm
             isDisabled={this.state.isLoading}
             propagateFormErrors={this.state.propagateAmountFormErrors}
-            ref={form => this.amountForm = form}
+            ref={form => (this.amountForm = form)}
           />
           <Hyperlink href="Agent">Back to Home</Hyperlink>
         </ScrollView>
 
-        <Button 
+        <Button
           containerStyle={styles.continueButton}
           loading={this.state.isLoading}
           onPress={this.onSubmitAmountFormButtonPress}
@@ -346,13 +336,12 @@ class FundWalletInAppScene extends React.Component {
       </View>
     );
   }
-
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setIsFastRefreshPending: (value) => dispatch(setIsFastRefreshPending(value)),
-  }
+    setIsFastRefreshPending: value => dispatch(setIsFastRefreshPending(value)),
+  };
 }
 
 export default connect(null, mapDispatchToProps)(FundWalletInAppScene);
